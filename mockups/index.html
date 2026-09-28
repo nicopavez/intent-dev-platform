@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Intent Layer: Wireframe</title>
+<style>
+  :root { color-scheme: light; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    background: #fff;
+    color: #111;
+    margin: 0;
+    padding: 32px 24px 64px;
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: #555; font-size: 13px; margin: 0 0 28px; }
+  .cols { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+  .col { flex: 1 1 380px; min-width: 320px; border: 1px solid #111; }
+  .col-head {
+    border-bottom: 1px solid #111;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .col-body { padding: 16px; }
+  .box { border: 1px dashed #999; padding: 10px 12px; margin-bottom: 10px; font-size: 13px; }
+  .box.tool { display: flex; justify-content: space-between; align-items: center; }
+  .tag { border: 1px solid #111; font-size: 10px; padding: 1px 6px; border-radius: 3px; }
+  .tag.low { border-style: dashed; font-weight: 600; }
+  .tag.conflict { background: #111; color: #fff; font-weight: 600; }
+  .fixed-panel {
+    border: 1px solid #111; margin-top: 16px; padding: 12px; font-size: 12px;
+    background: #fff;
+  }
+  .fixed-head {
+    font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: .04em;
+    margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .fixed-head .tag { font-size: 9px; text-transform: none; letter-spacing: 0; }
+  .arrow { text-align: center; color: #777; font-size: 12px; margin: 6px 0; }
+  label { display: block; font-size: 11px; color: #555; margin: 10px 0 3px; }
+  input, select, textarea {
+    width: 100%; font-size: 13px; padding: 6px 8px;
+    border: 1px solid #111; background: #fafafa; font-family: inherit;
+  }
+  textarea { resize: none; height: 54px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 4px; }
+  .tab {
+    border: 1px solid #111; padding: 5px 10px; font-size: 12px;
+    background: #fff; color: #777;
+  }
+  .tab.active { background: #111; color: #fff; font-weight: 600; }
+  .btn {
+    display: inline-block; margin-top: 14px; border: 1px solid #111;
+    padding: 8px 14px; font-size: 13px; font-weight: 600; background: #111; color: #fff;
+  }
+  .btn.secondary { background: #fff; color: #111; margin-left: 8px; }
+  .btn-row { display: flex; align-items: center; }
+  .understood {
+    border: 1px solid #111; margin-top: 16px; padding: 12px; font-size: 12px;
+    background: #f7f7f7;
+  }
+  .understood-head { font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: .04em; margin-bottom: 8px; }
+  .fields { width: 100%; border-collapse: collapse; }
+  .fields td { padding: 4px 0; border-bottom: 1px dashed #ccc; font-size: 12px; }
+  .fields td:first-child { color: #555; width: 40%; }
+  .pr {
+    border: 1px solid #111; margin-top: 16px; padding: 12px; font-size: 12px; font-family: ui-monospace, Consolas, monospace;
+    background: #f7f7f7;
+  }
+  .pr .diffline { padding: 1px 0; }
+  .plus { color: #0a0; }
+  .rationale { font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size: 12px; color: #333; margin-top: 8px; border-top: 1px dashed #999; padding-top: 8px; }
+  .footnote { font-size: 11px; color: #777; margin-top: 28px; }
+</style>
+</head>
+<body>
+  <h1>Intent Layer: before / after (low-fidelity wireframe)</h1>
+  <p class="sub">Maya's Tuesday afternoon, once her service is code-complete. Referenced from the PRD's use cases and the deck.</p>
+
+  <div class="cols">
+    <div class="col">
+      <div class="col-head">Today: 4 disconnected tools</div>
+      <div class="col-body">
+        <div class="box tool">Provisioning console <span class="tag">manual YAML</span></div>
+        <div class="arrow">↓ hand-write cluster/namespace config</div>
+        <div class="box tool">Security & Compliance console <span class="tag">manual IAM</span></div>
+        <div class="arrow">↓ request secrets, scope IAM role</div>
+        <div class="box tool">Observability console <span class="tag">manual thresholds</span></div>
+        <div class="arrow">↓ configure dashboards, alerts</div>
+        <div class="box tool">Traffic Management console <span class="tag">manual LB/DNS</span></div>
+        <div class="arrow">↓ open ticket, wait on review</div>
+        <div class="box" style="border-style:solid;">Staging: days later</div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="col-head">After: one AI intent layer</div>
+      <div class="col-body">
+        <div class="tabs">
+          <div class="tab active">Blurb</div>
+          <div class="tab">POC repo</div>
+          <div class="tab">Legacy repo</div>
+        </div>
+        <label>Describe what you're deploying</label>
+        <textarea readonly>Checkout service, Python, handles about 5k requests a second.</textarea>
+        <div class="btn">Analyze →</div>
+
+        <div class="fixed-panel">
+          <div class="fixed-head">Your team's fixed constraints <span class="tag">read-only, from business metadata</span></div>
+          <table class="fields">
+            <tr><td>Team</td><td>payments-core</td></tr>
+            <tr><td>Risk tier</td><td>2 (set by Security &amp; Compliance)</td></tr>
+            <tr><td>Budget ceiling</td><td>$6,000/mo</td></tr>
+            <tr><td>Owner</td><td>payments-core-lead@</td></tr>
+            <tr><td>Routable regions</td><td>US only</td></tr>
+          </table>
+        </div>
+
+        <div class="understood">
+          <div class="understood-head">Here's what I understood (from your description)</div>
+          <table class="fields">
+            <tr><td>Service</td><td>checkout-api</td></tr>
+            <tr><td>Runtime</td><td>python-3.12 &nbsp;<span class="tag">confident</span></td></tr>
+            <tr><td>Expected RPS</td><td>5000 &nbsp;<span class="tag conflict">conflict: exceeds Tier-2 budget sizing</span></td></tr>
+          </table>
+          <div class="rationale">
+            5k RPS at Tier-2 standard sizing would exceed payments-core's $6,000/mo ceiling. Reduce the estimate, or confirm to request a budget exception routed to your owner.
+          </div>
+          <div class="btn-row">
+            <div class="btn">Confirm →</div>
+            <div class="btn secondary">Correct something</div>
+          </div>
+        </div>
+
+        <div class="pr">
+          <div class="diffline">## Generated PR: checkout-api</div>
+          <div class="diffline plus">+ namespace: checkout-api (tier-2 template v3)</div>
+          <div class="diffline plus">+ iam-role: tier2-standard-service (read-only secrets)</div>
+          <div class="diffline plus">+ lb: us-only, sized for 1k rps (template: web-standard, within budget)</div>
+          <div class="diffline plus">+ dashboards: default tier-2 latency/error/saturation</div>
+          <div class="rationale">
+            <b>Why:</b> Tier-2, set by payments-core's fixed metadata, not this description, maps to the <code>tier2-standard-service</code> IAM template (scoped, no admin actions).
+            RPS confirmed at 1k after the budget conflict above → <code>web-standard</code> LB sizing, US-only per the team's routable regions. All modules pre-approved by Security &amp; Platforms: nothing here is generated from scratch, and nothing above came from raw text alone, only the confirmed record.
+            <br><br><i>Reviewer:</i> approve, request changes, or edit directly. Raw Terraform always visible below (collapsed).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="footnote">Low-fidelity wireframe, not a visual design. Grayscale intentional: this is a mechanism sketch, not a brand exercise. Two panels are deliberately separate: the fixed constraints panel is never editable here, it's read from business metadata, while the "here's what I understood" panel is the developer's own description and is exactly what she can correct. The confirm step is the safety checkpoint, not the input format: both panels appear whether the source was this blurb, a POC repo, or a legacy repo.</p>
+</body>
+</html>

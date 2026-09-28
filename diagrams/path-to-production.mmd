@@ -1,0 +1,10 @@
+flowchart LR
+    A["Service scaffolded"] --> B["Provisioning:\napproval queue\n~1.5 days"]
+    B --> C{"Security & Compliance\nrequest"}
+    C -->|"~70% of launches:\napproved template"| D["Template selected\nminutes"]
+    C -->|"~30% of launches:\nnet-new IAM/secret"| E["Manual security review\n~2 days"]
+    D --> F["Traffic Management:\nLB + DNS cutover\n~1 day"]
+    E --> F
+    F --> G["Live in production"]
+    B -.->|"non-blocking, parallel"| H["Observability:\ndashboard/alert wiring\n~2 hours"]
+    H -.-> G

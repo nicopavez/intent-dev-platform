@@ -1,0 +1,33 @@
+flowchart TB
+    Dev["Developer\n(Maya, on a Tier-1 team)"]
+    Meta["Business Metadata\n(risk tier, budget, owner, routability - read only, from the system of record)"]
+    Input["Blurb / POC repo / legacy repo\n(whatever she already has)"]
+    Extract["Extraction Agent\n(NL parse or static code read, never executes code)"]
+    Confirm["Confirm-or-Correct checkpoint\n(what she described + fixed team constraints, conflicts flagged)"]
+    Policy["Policy Engine\n(templates scoped by tier, budget, routable regions)"]
+    Prov["Provisioning API\n(clusters, namespaces)"]
+    Traffic["Traffic Management API\n(LB, DNS, routing)"]
+    Sec["Security & Compliance\n(existing IAM/secrets templates - selected, not generated)"]
+    Obs["Observability\n(default dashboards/alerts)"]
+    PR["Generated Pull Request\n(diff + plain-language rationale)"]
+    Reviewer["Senior Engineer\n(Dev, the skeptic)"]
+    Prod["Production"]
+
+    Dev -->|"provides"| Input
+    Dev -.->|"team identity resolves"| Meta
+    Input -->|"parsed by"| Extract
+    Meta -->|"fixed constraints feed"| Extract
+    Extract -->|"drafts intent record"| Confirm
+    Confirm -->|"developer confirms"| Policy
+    Confirm -.->|"developer corrects"| Extract
+    Policy -->|"selects modules from"| Prov
+    Policy --> Traffic
+    Policy --> Sec
+    Policy --> Obs
+    Prov --> PR
+    Traffic --> PR
+    Sec --> PR
+    Obs --> PR
+    PR -->|"reviews and approves"| Reviewer
+    Reviewer -->|"merge = only path to"| Prod
+    Prod -.->|"deploy event feeds metrics"| Input

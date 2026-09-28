@@ -1,0 +1,34 @@
+flowchart LR
+    subgraph "Business metadata (fixed, looked up automatically)"
+        Z0[Developer's team identity] --> Z1(Read: risk tier, budget, owner, routable regions)
+    end
+    subgraph Developer
+        A[Maya submits a blurb, a POC repo, or a legacy repo] --> B(Command: SubmitIntentInput)
+    end
+    subgraph "Agent: extraction (draft, not decision)"
+        B --> C[Read: NL parser or static code analysis]
+        C --> D(Event: IntentExtracted)
+        Z1 --> D
+    end
+    subgraph "Developer: confirm before anything acts"
+        D --> E["Read: 'here's what I understood' + fixed team constraints + any conflicts"]
+        E --> F(Command: ConfirmIntent / CorrectIntent)
+        F -->|correct| C
+    end
+    subgraph "Agent: composition (never generation)"
+        F -->|confirmed| G[Read: policy templates scoped by tier, budget, routable regions]
+        G --> H(Event: IntentConfirmed)
+        H --> I[Read: available Terraform/Crossplane modules]
+        I --> J(Event: ConfigurationComposed)
+        J --> K(Command: OpenPullRequest)
+    end
+    subgraph "Human review (never skipped)"
+        K --> L[Read: generated diff + plain-language rationale]
+        L --> M(Command: ApprovePR / RequestChanges)
+    end
+    subgraph Platform
+        M -->|approved| N(Event: ServiceDeployed)
+        M -->|changes requested| G
+        N --> O[Read: dashboards, deploy event log]
+        O --> P(Event: TimeToFirstDeployRecorded)
+    end
