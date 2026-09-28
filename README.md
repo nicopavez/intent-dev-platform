@@ -15,7 +15,7 @@ Engineers write code fast and then lose days hand-gluing four disconnected platf
 | [docs/01-opportunity-brief.md](docs/01-opportunity-brief.md) | The gap, personas, opportunity, hypothesis, flagged assumptions |
 | [docs/02-prd.md](docs/02-prd.md) | Main deliverable: Problem Formulation, Solution Definition, Technical Implications |
 | [docs/03-event-model.md](docs/03-event-model.md) | The intent to production mechanism, walked command by command |
-| [diagrams/](diagrams/) | Mermaid sources for the path to production, the event model, and communication flow, plus the success-metrics chart (light/dark SVG) |
+| [diagrams/](diagrams/) | Mermaid sources for the path to production (before/after), the event model, and communication flow, plus the success-metrics chart (light/dark SVG) |
 | [slides/deck.md](slides/deck.md) | Marp deck version of the PRD, timed for a live readout |
 | [mockups/index.html](mockups/index.html) | Low-fidelity before/after wireframe of the developer flow |
 | [appendix/ai-prompts.md](appendix/ai-prompts.md) | Representative AI prompts used to accelerate research and pressure-test trade-offs |

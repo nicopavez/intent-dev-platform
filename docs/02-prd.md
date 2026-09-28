@@ -58,6 +58,8 @@ Given those assumptions, score each step on three axes:
 
 *(An illustrative worked example built on the assumptions above, not a claim about any real organization's numbers.)*
 
+### Before: the path today
+
 The same table as a path, with time cost attached to each step (diagram source: [diagrams/path-to-production.mmd](../diagrams/path-to-production.mmd)):
 
 ```mermaid
@@ -74,6 +76,25 @@ flowchart LR
 ```
 
 The solid path is critical: everything on it is blocking, so its time costs add serially, roughly 2.5 days on the template branch, closer to 4.5 if a net-new security request is needed. The dashed branch, Observability, runs in parallel and never gates "live in production," which is why it scores **None** on blocking severity despite being tedious. That distinction, blocking vs. parallel, is what a capability-level label can't show but a step-level path does. Whatever scores highest gets targeted first, whether that's one step inside a single capability or several spread across two; every capability stays necessary regardless of how its steps score, the score just says where to start.
+
+### After: the same journey with an AI Intent Layer
+
+Same start node, same destination, same four capabilities underneath, but the developer's own path through them collapses to a handful of steps (diagram source: [diagrams/path-to-production-after.mmd](../diagrams/path-to-production-after.mmd)):
+
+```mermaid
+flowchart LR
+    A["Service scaffolded"] --> B["Developer describes it\nblurb, ~30 sec"]
+    B --> C["Agent drafts intent\nUC-01, under 10s"]
+    C --> D{"Developer confirms\nor corrects, ~5 min"}
+    D -->|"correct"| C
+    D -->|"confirmed"| E["Agent composes PR\nfrom pre-approved modules\nUC-02, under 1 min"]
+    E --> F["Reviewer approves & merges\n~1-2 hrs"]
+    F --> G["Live in production"]
+    B -.->|"parallel, no added developer time"| H["Business metadata resolved\ntier / budget / owner / routability\nUC-05"]
+    H -.-> C
+```
+
+Every step that used to be a queue, Provisioning's approval, Security's review, Traffic's cutover, is now either a sub-minute agent action or folded into the one human step that was always going to exist anyway: a reviewer reading a PR. The metadata lookup (dashed) runs the same way Observability did in the before path, in parallel, adding no developer time, except now it's a safety gate instead of a chore. Total critical path: roughly 1-2 hours, dominated entirely by the reviewer's own pace, not by waiting on four separate systems. That's the same order of magnitude as the "under 1 day" target in Success Metrics, with room to spare; the honest risk is that a reviewer's queue, not the agent, becomes the new bottleneck, which is exactly why "propose, never auto-merge" (FR-06) doesn't try to compress that step away.
 
 ## Inputs and data points
 

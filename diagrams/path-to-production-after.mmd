@@ -1,0 +1,10 @@
+flowchart LR
+    A["Service scaffolded"] --> B["Developer describes it\nblurb, ~30 sec"]
+    B --> C["Agent drafts intent\nUC-01, under 10s"]
+    C --> D{"Developer confirms\nor corrects, ~5 min"}
+    D -->|"correct"| C
+    D -->|"confirmed"| E["Agent composes PR\nfrom pre-approved modules\nUC-02, under 1 min"]
+    E --> F["Reviewer approves & merges\n~1-2 hrs"]
+    F --> G["Live in production"]
+    B -.->|"parallel, no added developer time"| H["Business metadata resolved\ntier / budget / owner / routability\nUC-05"]
+    H -.-> C
