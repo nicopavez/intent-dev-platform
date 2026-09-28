@@ -5,7 +5,7 @@ status: Draft for review
 owner: Nicholas Pavez
 ---
 
-**Related:** [Opportunity brief](01-opportunity-brief.md), [event model](03-event-model.md), [deck](../slides/deck.md), [mockup](../mockups/index.html)
+**Related:** [Opportunity brief](01-opportunity-brief.md), [event model](03-event-model.md), [GUI mockup](../mockups/index.html), [TUI mockup](../mockups/tui.html)
 
 ## Assumptions
 
@@ -36,6 +36,10 @@ flowchart LR
 
 Every step that used to be a multi-day queue collapses to a sub-minute agent action or the one human step that was always going to exist anyway: a reviewer reading a PR.
 
+That also answers the brief's hardest constraint directly: a hallucination in an infrastructure configuration can't reach production, because the agent never generates infrastructure configuration. It only ever selects from modules a human already approved, and a human still has to merge (FR-04, FR-06).
+
+Mocked two ways, same mechanism, different surface: [a GUI](../mockups/index.html) for reviewing and confirming, and [a CLI/TUI](../mockups/tui.html) for developers who'd rather not leave the terminal.
+
 ## Industry context
 
 Three things make this solvable now, not just desirable:
@@ -53,6 +57,8 @@ A developer with a finished service still has to become a part-time expert in fo
 - The same "stand up a Tier-2 service" problem gets re-solved by every team, producing as many slightly different configurations as there are engineers who've touched it, each a distinct source of drift and risk.
 - Toil concentrates unevenly. Ranking the four capabilities against each other hides that; some of the worst individual steps sit inside one capability, some inside another, and the fix has to target steps, not categories (see below).
 - Nothing prevents a developer's own self-report from setting things a platform can't safely let them set, risk tier, budget, which region they're allowed to touch, so any interface has to separate what the developer describes from what the business has already fixed.
+
+**What success looks like for developers:** finishing a service and getting it correctly secured, observable, and live without opening a ticket or reading a Terraform doc, for the common case. Not that the AI writes any config, that the boilerplate disappears for the 80% case, and the 20% case still and always routes to a human.
 
 ## Where the friction actually is
 
@@ -126,6 +132,12 @@ What I'd want to gather before committing further, in rough priority order:
 | Team-level metadata | Risk tier, budget ceiling, owner, routable regions, and whether each is queryable at all | Service catalog, cost/FinOps tool, org chart, network policy engine |
 | Developer sentiment | Response rate and content of a one-question in-PR/in-IDE micro-survey | Lightweight, opt-in, non-blocking |
 
+## Validating without disrupting sprints
+
+Three low-friction layers, cheapest first: mine the signals above before talking to anyone, that alone shows the shape of the problem; then sample, not survey, pull 5-6 engineers who generated the highest-toil tickets in the data for a 20-minute conversation scheduled around their sprint, not inside it; then co-opt one team as the pilot instead of asking teams to validate a concept in the abstract, the MVP in Solution Definition *is* the validation.
+
+The fastest way to learn if this actually solves the problem: does the pilot team choose to use it again on their next service without being told to. That's a stronger signal than a satisfaction survey, and it's the real gate on expanding past one team (see Release phases, P3).
+
 ## Personas
 
 | Role | Job to be done | Pain | Success state |
@@ -179,7 +191,13 @@ Deferred (each has a real trigger to revisit): POC-repo and legacy-repo ingestio
 
 Not deferred, ruled out entirely, each would undermine the safety model itself: freeform generation of new IaC, or of net-new security/compliance policy, from scratch; letting a developer's own description set or override their team's tier, budget, owner, or routability; executing untrusted code from a POC or legacy repo to infer intent; any auto-merge without human review at launch.
 
+## Connecting developer speed to business stability and cost
+
+Speed and stability aren't in tension if the agent only recombines pre-vetted modules: every deploy that used to be hand-authored Terraform, a fresh source of drift and misconfiguration each time, becomes a deploy from the same small set of audited templates. Consistency *is* the reliability argument, not a trade against it (see Industry context). Cost follows the same logic two ways: standardized modules make right-sizing and reserved-capacity decisions tractable at the template level instead of renegotiating them service-by-service, and the budget ceiling in each team's fixed metadata (FR-02) catches an oversized request before it's provisioned, not after the bill arrives, the checkout-api example in both mockups is exactly that catch happening.
+
 ## Success metrics
+
+If this works, the Platforms team's role changes: it stops being a routing layer for tickets and becomes a policy and composition layer, engineers self-serve the common path, and the team's time shifts to the judgment calls that actually need a human, new service tiers, exceptions, the automation itself. These are the metrics that would show it:
 
 | Metric | Target | By when |
 |---|---|---|
@@ -198,6 +216,8 @@ Not deferred, ruled out entirely, each would undermine the safety model itself: 
 Launched as a product aimed at skeptics, not a mandate: one credible senior engineer champions the pilot publicly, the pilot's real numbers get published internally and labeled as one team's data, and the tool ships under a discoverable name with runnable examples rather than a policy announcement. Opt-in for two quarters before any team is required to use it; mandating an unproven tool to a team that has already built its own workarounds is how an initiative loses the trust it needs.
 
 # Part 3: Technical Implications
+
+Not a claim to a finished architecture, the brief itself says as much. This is detailed enough to defend the trust mechanism live, not to lock in an implementation before Week 1 even starts.
 
 ## How the intent layer and the four capabilities communicate
 
@@ -247,3 +267,7 @@ Both the metadata lookup and the module composition happen before a human ever s
 **Hardest assumption:** that a developer will actually read and correct the "here's what I understood" summary rather than reflexively clicking confirm. If that's wrong, the confirm step becomes theater instead of a safety gate, and the fix isn't a better UI, it's tightening what's allowed to ship on template-selection alone versus what still requires a reviewer to independently catch the same error.
 
 Constraints: builds on each capability's existing API/IaC interface, not a replacement; reads business metadata from wherever it already lives, never originates it; the MVP's Tier-2/Python/one-team scope is sized to a 4-5 engineer squad for one quarter, not a general-purpose platform.
+
+## What I'd want to be wrong about
+
+Two things this plan leans on hardest. First, that a hallucination never reaches production because the agent never generates infrastructure configuration, only selects from modules a human already approved, with a human still merging every change (FR-04, FR-06); if that boundary ever gets papered over for speed, the whole safety argument collapses with it. Second, that the four capabilities and the team-level metadata (tier, budget, owner, routability) already exist as queryable systems, not tribal knowledge; if they don't, this becomes a data-plumbing project before it's an agent project, and the six-month timeline moves right by however long that takes. I'd rather find out which of these is wrong in Week 1 (P0) than in Week 4.

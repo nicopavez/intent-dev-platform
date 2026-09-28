@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Intent Layer: TUI Wireframe</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    background: #f9f9f7;
+    color: #0b0b0b;
+    margin: 0;
+    padding: 32px 24px 64px;
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: #52514e; font-size: 13px; margin: 0 0 24px; }
+  .term {
+    max-width: 720px;
+    background: #1a1a19;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(11,11,11,0.10);
+  }
+  .term-bar {
+    display: flex; gap: 6px; align-items: center;
+    padding: 10px 14px; background: #232320;
+  }
+  .term-bar .dot { width: 10px; height: 10px; border-radius: 50%; background: #383835; }
+  .term-title { margin-left: 8px; font-size: 12px; color: #898781; font-family: ui-monospace, Consolas, monospace; }
+  .term-body {
+    padding: 18px 20px 24px;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #c3c2b7;
+    white-space: pre-wrap;
+  }
+  .prompt { color: #3987e5; }
+  .input { color: #ffffff; }
+  .muted { color: #898781; }
+  .label { color: #898781; }
+  .value { color: #ffffff; }
+  .fixed { color: #c3c2b7; }
+  .tag-ok { color: #0ca30c; }
+  .tag-conflict { color: #ffffff; background: #d03b3b; padding: 0 5px; border-radius: 3px; }
+  .warn { color: #ffffff; background: #d03b3b; padding: 8px 10px; border-radius: 4px; display: block; margin: 4px 0; }
+  .plus { color: #0ca30c; }
+  .heading { color: #ffffff; font-weight: 600; }
+  .divider { color: #383835; }
+  .footnote { font-size: 11px; color: #898781; margin-top: 16px; max-width: 720px; }
+  a { color: #2a78d6; }
+</style>
+</head>
+<body>
+  <h1>Intent Layer: CLI/TUI wireframe</h1>
+  <p class="sub">Same mechanism as <a href="index.html">the GUI mock</a>, same example (checkout-api, budget conflict included), rendered as a terminal session for developers who'd rather not leave it.</p>
+
+  <div class="term">
+    <div class="term-bar">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+      <div class="term-title">maya@dev-shell: intent deploy</div>
+    </div>
+    <div class="term-body"><span class="prompt">$</span> <span class="input">intent deploy</span>
+<span class="muted">&gt; Describe what you're deploying:</span>
+<span class="input">Checkout service, Python, handles about 5k requests a second.</span>
+
+<span class="heading">Resolving team metadata...</span> <span class="fixed">payments-core</span>
+  <span class="label">tier</span>         <span class="fixed">2</span>        <span class="muted">(set by Security &amp; Compliance, not editable)</span>
+  <span class="label">budget</span>       <span class="fixed">$6,000/mo</span>
+  <span class="label">owner</span>        <span class="fixed">payments-core-lead@</span>
+  <span class="label">regions</span>      <span class="fixed">us-only</span>
+
+<span class="heading">Extracting intent...</span>
+  <span class="label">service</span>      <span class="value">checkout-api</span>
+  <span class="label">runtime</span>      <span class="value">python-3.12</span>          <span class="tag-ok">[confident]</span>
+  <span class="label">expected_rps</span> <span class="value">5000</span>                 <span class="tag-conflict">CONFLICT</span>
+
+<span class="warn">! 5k RPS at Tier-2 standard sizing would exceed payments-core's $6,000/mo ceiling.
+  Reduce the estimate, or type 'exception' to route a budget exception to your owner.</span>
+
+<span class="prompt">&gt;</span> <span class="input">1000</span>
+
+<span class="muted">Re-checking against fixed constraints... OK</span>
+
+<span class="heading">Here's what I understood:</span>
+  <span class="label">service</span>      <span class="value">checkout-api</span>
+  <span class="label">tier</span>         <span class="fixed">2</span>            <span class="muted">(fixed, payments-core)</span>
+  <span class="label">runtime</span>      <span class="value">python-3.12</span>
+  <span class="label">region</span>       <span class="fixed">us-only</span>      <span class="muted">(fixed, payments-core)</span>
+  <span class="label">expected_rps</span> <span class="value">1000</span>
+
+<span class="muted">Confirm? [y/n/edit]</span> <span class="input">y</span>
+
+<span class="heading">Composing from pre-approved modules...</span>
+  <span class="plus">+ namespace: checkout-api (tier-2 template v3)</span>
+  <span class="plus">+ iam-role: tier2-standard-service (read-only secrets)</span>
+  <span class="plus">+ lb: us-only, sized for 1k rps (template: web-standard)</span>
+  <span class="plus">+ dashboards: default tier-2 latency/error/saturation</span>
+
+<span class="heading">Opened PR #4127: checkout-api</span>
+  <span class="muted">https://github.com/payments-core/checkout-api/pull/4127</span>
+  <span class="muted">Reviewer: @payments-core-lead</span>
+  <span class="muted">Rationale attached. Raw Terraform in diff. Nothing above was generated from scratch,</span>
+  <span class="muted">only composed from modules a human already wrote and approved.</span>
+
+<span class="prompt">$</span> <span class="input">_</span></div>
+  </div>
+
+  <p class="footnote">Low-fidelity wireframe, not a finished CLI. The mechanism is identical to <a href="index.html">the GUI mock</a>: extraction is a draft, business metadata is never editable, a conflict is named and never silently resolved, and composition only ever draws from pre-approved modules. Reusing the same repo palette (dark surface, status red for the conflict, status green for confirmation) intentionally, this is the same product, not a different one.</p>
+</body>
+</html>
