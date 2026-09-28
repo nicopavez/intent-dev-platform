@@ -19,6 +19,23 @@ Shipping a simple microservice requires hand-configuring four disconnected platf
 
 This PRD proposes an **AI Intent Layer**: a confirm-then-compose interface that turns whatever a developer already has, a blurb, a POC repo, or a legacy service, into pre-approved infrastructure configuration, scoped by business-set constraints (tier, budget, owner, routability) the developer never sets themselves, and reviewable as a diff before a human merges it. It starts on one input mode and one service tier, and earns broader scope later with real usage data.
 
+This is the shape we're aiming for (diagram source: [diagrams/path-to-production-after.mmd](../diagrams/path-to-production-after.mmd); full before/after time-cost breakdown in [Where the friction actually is](#where-the-friction-actually-is)):
+
+```mermaid
+flowchart LR
+    A["Service scaffolded"] --> B["Developer describes it\nblurb, ~30 sec"]
+    B --> C["Agent drafts intent\nUC-01, under 10s"]
+    C --> D{"Developer confirms\nor corrects, ~5 min"}
+    D -->|"correct"| C
+    D -->|"confirmed"| E["Agent composes PR\nfrom pre-approved modules\nUC-02, under 1 min"]
+    E --> F["Reviewer approves & merges\n~1-2 hrs"]
+    F --> G["Live in production"]
+    B -.->|"parallel, no added developer time"| H["Business metadata resolved\ntier / budget / owner / routability\nUC-05"]
+    H -.-> C
+```
+
+Every step that used to be a multi-day queue collapses to a sub-minute agent action or the one human step that was always going to exist anyway: a reviewer reading a PR.
+
 ## Industry context
 
 Three things make this solvable now, not just desirable:
