@@ -38,7 +38,7 @@ Every step that used to be a multi-day queue collapses to a sub-minute agent act
 
 That also answers the brief's hardest constraint directly: a hallucination in an infrastructure configuration can't reach production, because the agent never generates infrastructure configuration. It only ever selects from modules a human already approved, and a human still has to merge (FR-04, FR-06).
 
-Mocked two ways, same mechanism, different surface: [a GUI](../mockups/index.html) for reviewing and confirming, and [a CLI/TUI](../mockups/tui.html) for developers who'd rather not leave the terminal.
+Mocked two ways, same mechanism, different surface, both branded **Shepherd** internally (see Internal adoption): [a GUI](../mockups/index.html) for reviewing and confirming, and [a CLI/TUI](../mockups/tui.html) for developers who'd rather not leave the terminal. Both mocks show all three input modes (blurb, POC repo, legacy repo), not just the blurb path.
 
 ## Industry context
 
@@ -213,7 +213,7 @@ If this works, the Platforms team's role changes: it stops being a routing layer
 
 ## Internal adoption
 
-Launched as a product aimed at skeptics, not a mandate: one credible senior engineer champions the pilot publicly, the pilot's real numbers get published internally and labeled as one team's data, and the tool ships under a discoverable name with runnable examples rather than a policy announcement. Opt-in for two quarters before any team is required to use it; mandating an unproven tool to a team that has already built its own workarounds is how an initiative loses the trust it needs.
+Launched as a product aimed at skeptics, not a mandate: one credible senior engineer champions the pilot publicly, the pilot's real numbers get published internally and labeled as one team's data, and the tool ships under a discoverable name with runnable examples rather than a policy announcement. Internally this is **Shepherd**, not "the AI Intent Layer," a name people can say in Slack, and one that does some of the trust argument by itself: a shepherd guides the flock, it doesn't replace the shepherd's own judgment, and it never lets something wander off unsupervised (see the mockups for what that looks like on screen). Opt-in for two quarters before any team is required to use it; mandating an unproven tool to a team that has already built its own workarounds is how an initiative loses the trust it needs.
 
 # Part 3: Technical Implications
 

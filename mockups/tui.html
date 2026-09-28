@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Intent Layer: TUI Wireframe</title>
+<title>Shepherd: TUI Wireframe</title>
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
@@ -14,9 +14,11 @@
     padding: 32px 24px 64px;
   }
   h1 { font-size: 20px; margin: 0 0 4px; }
-  .sub { color: #52514e; font-size: 13px; margin: 0 0 24px; }
+  .sub { color: #52514e; font-size: 13px; margin: 0 0 20px; }
+  .sub a { color: #2a78d6; }
+
   .term {
-    max-width: 720px;
+    max-width: 760px;
     background: #1a1a19;
     border-radius: 8px;
     overflow: hidden;
@@ -28,13 +30,69 @@
   }
   .term-bar .dot { width: 10px; height: 10px; border-radius: 50%; background: #383835; }
   .term-title { margin-left: 8px; font-size: 12px; color: #898781; font-family: ui-monospace, Consolas, monospace; }
+
+  .banner {
+    font-family: ui-monospace, Consolas, monospace;
+    padding: 20px 20px 14px;
+    border-bottom: 1px solid #2c2c2a;
+  }
+  .banner-row { display: flex; align-items: center; gap: 12px; }
+  .banner-mascot { font-size: 34px; line-height: 1; }
+  .banner-word { font-size: 26px; font-weight: 700; letter-spacing: 0.08em; color: #ffffff; }
+  .banner-tag { font-size: 12px; color: #898781; margin-top: 2px; }
+
+  .ctxbar {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 11.5px;
+    background: #232320;
+    color: #c3c2b7;
+    padding: 8px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    border-bottom: 1px solid #2c2c2a;
+  }
+  .ctxbar b { color: #ffffff; font-weight: 600; }
+  .ctxbar .k { color: #898781; }
+  .ctxbar .fixed { color: #3987e5; }
+
+  .tabs input[type="radio"] { display: none; }
+  .tab-labels {
+    display: flex; gap: 2px;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 12px;
+    background: #1a1a19;
+    padding: 10px 16px 0;
+  }
+  .tab-labels label {
+    padding: 8px 14px;
+    color: #898781;
+    cursor: pointer;
+    border: 1px solid #2c2c2a;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    background: #202020;
+  }
+  .tab-labels label b { color: #3987e5; font-weight: 700; }
+  #tab-blurb:checked ~ .tab-labels label[for="tab-blurb"],
+  #tab-poc:checked ~ .tab-labels label[for="tab-poc"],
+  #tab-legacy:checked ~ .tab-labels label[for="tab-legacy"] {
+    background: #1a1a19; color: #ffffff; border-color: #383835;
+  }
+
+  .panel { display: none; }
+  #tab-blurb:checked ~ .panels #panel-blurb { display: block; }
+  #tab-poc:checked ~ .panels #panel-poc { display: block; }
+  #tab-legacy:checked ~ .panels #panel-legacy { display: block; }
+
   .term-body {
     padding: 18px 20px 24px;
     font-family: ui-monospace, Consolas, monospace;
-    font-size: 13px;
+    font-size: 12.5px;
     line-height: 1.6;
     color: #c3c2b7;
     white-space: pre-wrap;
+    border-top: 1px solid #2c2c2a;
   }
   .prompt { color: #3987e5; }
   .input { color: #ffffff; }
@@ -43,33 +101,63 @@
   .value { color: #ffffff; }
   .fixed { color: #c3c2b7; }
   .tag-ok { color: #0ca30c; }
+  .tag-warn { color: #eda100; }
   .tag-conflict { color: #ffffff; background: #d03b3b; padding: 0 5px; border-radius: 3px; }
   .warn { color: #ffffff; background: #d03b3b; padding: 8px 10px; border-radius: 4px; display: block; margin: 4px 0; }
+  .diffminus { color: #e34948; }
   .plus { color: #0ca30c; }
   .heading { color: #ffffff; font-weight: 600; }
-  .divider { color: #383835; }
-  .footnote { font-size: 11px; color: #898781; margin-top: 16px; max-width: 720px; }
+  .cursor { display: inline-block; width: 7px; height: 13px; background: #c3c2b7; vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .footnote { font-size: 11px; color: #898781; margin-top: 16px; max-width: 760px; }
   a { color: #2a78d6; }
 </style>
 </head>
 <body>
-  <h1>Intent Layer: CLI/TUI wireframe</h1>
-  <p class="sub">Same mechanism as <a href="index.html">the GUI mock</a>, same example (checkout-api, budget conflict included), rendered as a terminal session for developers who'd rather not leave it.</p>
+  <h1>Shepherd: CLI/TUI wireframe</h1>
+  <p class="sub">Internal name for the intent layer described in the PRD. Same mechanism as <a href="index.html">the GUI mock</a>, three input modes (UC-01, UC-03, UC-04), all three converge on the same confirm-then-compose flow.</p>
 
   <div class="term">
     <div class="term-bar">
       <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-      <div class="term-title">maya@dev-shell: intent deploy</div>
+      <div class="term-title">maya@dev-shell: shepherd</div>
     </div>
-    <div class="term-body"><span class="prompt">$</span> <span class="input">intent deploy</span>
+
+    <div class="banner">
+      <div class="banner-row">
+        <div class="banner-mascot">🦮</div>
+        <div>
+          <div class="banner-word">SHEPHERD</div>
+          <div class="banner-tag">guides intent to production &middot; never lets the flock wander</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ctxbar">
+      <span><span class="k">context</span> <b>payments-core</b></span>
+      <span><span class="k">tier</span> <span class="fixed">2</span></span>
+      <span><span class="k">budget</span> <span class="fixed">$6,000/mo</span></span>
+      <span><span class="k">owner</span> <span class="fixed">payments-core-lead@</span></span>
+      <span><span class="k">regions</span> <span class="fixed">us-only</span></span>
+      <span class="muted">(read-only, set by Security &amp; Compliance and FinOps)</span>
+    </div>
+
+    <div class="tabs">
+      <input type="radio" name="view" id="tab-blurb" checked>
+      <input type="radio" name="view" id="tab-poc">
+      <input type="radio" name="view" id="tab-legacy">
+      <div class="tab-labels">
+        <label for="tab-blurb"><b>[1]</b> blurb</label>
+        <label for="tab-poc"><b>[2]</b> poc repo</label>
+        <label for="tab-legacy"><b>[3]</b> legacy repo</label>
+      </div>
+
+      <div class="panels">
+        <div class="panel" id="panel-blurb">
+          <div class="term-body"><span class="prompt">$</span> <span class="input">shepherd deploy</span>
 <span class="muted">&gt; Describe what you're deploying:</span>
 <span class="input">Checkout service, Python, handles about 5k requests a second.</span>
-
-<span class="heading">Resolving team metadata...</span> <span class="fixed">payments-core</span>
-  <span class="label">tier</span>         <span class="fixed">2</span>        <span class="muted">(set by Security &amp; Compliance, not editable)</span>
-  <span class="label">budget</span>       <span class="fixed">$6,000/mo</span>
-  <span class="label">owner</span>        <span class="fixed">payments-core-lead@</span>
-  <span class="label">regions</span>      <span class="fixed">us-only</span>
 
 <span class="heading">Extracting intent...</span>
   <span class="label">service</span>      <span class="value">checkout-api</span>
@@ -81,13 +169,13 @@
 
 <span class="prompt">&gt;</span> <span class="input">1000</span>
 
-<span class="muted">Re-checking against fixed constraints... OK</span>
+<span class="muted">Re-checking against fixed context above... OK</span>
 
 <span class="heading">Here's what I understood:</span>
   <span class="label">service</span>      <span class="value">checkout-api</span>
-  <span class="label">tier</span>         <span class="fixed">2</span>            <span class="muted">(fixed, payments-core)</span>
+  <span class="label">tier</span>         <span class="fixed">2</span>            <span class="muted">(fixed, see context bar)</span>
   <span class="label">runtime</span>      <span class="value">python-3.12</span>
-  <span class="label">region</span>       <span class="fixed">us-only</span>      <span class="muted">(fixed, payments-core)</span>
+  <span class="label">region</span>       <span class="fixed">us-only</span>      <span class="muted">(fixed, see context bar)</span>
   <span class="label">expected_rps</span> <span class="value">1000</span>
 
 <span class="muted">Confirm? [y/n/edit]</span> <span class="input">y</span>
@@ -99,14 +187,91 @@
   <span class="plus">+ dashboards: default tier-2 latency/error/saturation</span>
 
 <span class="heading">Opened PR #4127: checkout-api</span>
-  <span class="muted">https://github.com/payments-core/checkout-api/pull/4127</span>
-  <span class="muted">Reviewer: @payments-core-lead</span>
-  <span class="muted">Rationale attached. Raw Terraform in diff. Nothing above was generated from scratch,</span>
-  <span class="muted">only composed from modules a human already wrote and approved.</span>
+  <span class="muted">Reviewer: @payments-core-lead. Rationale attached.</span>
+  <span class="muted">Nothing above was generated from scratch, only composed from</span>
+  <span class="muted">modules a human already wrote and approved.</span>
 
-<span class="prompt">$</span> <span class="input">_</span></div>
+<span class="prompt">$</span> <span class="cursor"></span></div>
+        </div>
+
+        <div class="panel" id="panel-poc">
+          <div class="term-body"><span class="prompt">$</span> <span class="input">shepherd analyze ./checkout-poc</span>
+
+<span class="heading">Reading ./checkout-poc</span> <span class="muted">(static only, never executed)...</span>
+  <span class="tag-ok">✓</span> <span class="label">language</span>     python 3.12 <span class="muted">(from pyproject.toml)</span>
+  <span class="tag-ok">✓</span> <span class="label">framework</span>    fastapi
+  <span class="tag-ok">✓</span> <span class="label">dependencies</span> 23 packages, none flagged
+  <span class="tag-warn">⚠</span> no Dockerfile found, inferring runtime from pyproject.toml
+  <span class="tag-warn">⚠</span> no CI config found, can't infer traffic from history
+
+<span class="heading">Extracting intent from repo signals...</span>
+  <span class="label">service</span>      checkout-poc <span class="muted">&rarr; suggested:</span> <span class="value">checkout-api</span>
+  <span class="label">runtime</span>      <span class="value">python-3.12</span>  <span class="tag-ok">[confident, from pyproject.toml]</span>
+  <span class="label">expected_rps</span> <span class="tag-conflict">NEEDS INPUT</span> <span class="muted">no CI or load-test data in this repo</span>
+
+<span class="muted">&gt; How much traffic should checkout-api expect?</span>
+<span class="input">1000</span>
+
+<span class="heading">Here's what I understood:</span>
+  <span class="label">service</span>      <span class="value">checkout-api</span>
+  <span class="label">tier</span>         <span class="fixed">2</span>            <span class="muted">(fixed, see context bar)</span>
+  <span class="label">runtime</span>      <span class="value">python-3.12</span>  <span class="muted">(read from repo, not generated)</span>
+  <span class="label">region</span>       <span class="fixed">us-only</span>      <span class="muted">(fixed, see context bar)</span>
+  <span class="label">expected_rps</span> <span class="value">1000</span>         <span class="muted">(you provided this, repo had no signal)</span>
+
+<span class="muted">Confirm? [y/n/edit]</span> <span class="input">y</span>
+
+<span class="heading">Composing from pre-approved modules...</span>
+  <span class="plus">+ namespace: checkout-api (tier-2 template v3)</span>
+  <span class="plus">+ iam-role: tier2-standard-service (read-only secrets)</span>
+  <span class="plus">+ lb: us-only, sized for 1k rps (template: web-standard)</span>
+
+<span class="heading">Opened PR #4128: checkout-api (from POC)</span>
+  <span class="muted">Reviewer: @payments-core-lead.</span>
+  <span class="muted">Source repo was read, never executed. Static analysis only (FR-08).</span>
+
+<span class="prompt">$</span> <span class="cursor"></span></div>
+        </div>
+
+        <div class="panel" id="panel-legacy">
+          <div class="term-body"><span class="prompt">$</span> <span class="input">shepherd analyze --mode=modernize ./legacy-checkout</span>
+
+<span class="heading">Reading ./legacy-checkout</span> <span class="muted">(static only, never executed)...</span>
+  <span class="tag-ok">✓</span> <span class="label">language</span>   python 3.9 <span class="muted">(from setup.py)</span>
+  <span class="tag-ok">✓</span> <span class="label">existing IaC</span> terraform/ <span class="muted">(last modified 14 months ago)</span>
+
+<span class="heading">Diffing against current approved templates...</span>
+  <span class="tag-warn">⚠</span> iam-role   scoped to <span class="value">secretsmanager:*</span> <span class="muted">(template: read-only, named secrets only)</span>
+  <span class="tag-warn">⚠</span> lb config  <span class="value">classic-lb</span> pattern <span class="muted">(deprecated; template: web-standard)</span>
+  <span class="tag-ok">✓</span> namespace  matches current provisioning template
+  <span class="tag-ok">✓</span> dashboards present, matches current defaults
+
+<span class="muted">2 modernization opportunities found. This is a diff, not a fresh deploy.</span>
+
+<span class="heading">Here's what I understood:</span>
+  <span class="label">service</span>  <span class="value">checkout-legacy</span>
+  <span class="label">tier</span>     <span class="fixed">2</span>            <span class="muted">(fixed, see context bar)</span>
+  <span class="label">runtime</span>  python-3.9 <span class="muted">(3.12 available, not required to modernize)</span>
+  <span class="label">action</span>   narrow IAM scope, migrate LB to web-standard template
+
+<span class="muted">Confirm this modernization plan? [y/n/edit]</span> <span class="input">y</span>
+
+<span class="heading">Composing modernization PR...</span>
+  <span class="diffminus">- iam-role: secretsmanager:* (broad)</span>
+  <span class="plus">+ iam-role: tier2-standard-service (read-only, named secrets only)</span>
+  <span class="diffminus">- lb: classic-lb (deprecated)</span>
+  <span class="plus">+ lb: web-standard (current template)</span>
+
+<span class="heading">Opened PR #4129: checkout-legacy (modernization)</span>
+  <span class="muted">Reviewer: @payments-core-lead.</span>
+  <span class="muted">Flagged as a diff against a live service. Nothing changes until merged.</span>
+
+<span class="prompt">$</span> <span class="cursor"></span></div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <p class="footnote">Low-fidelity wireframe, not a finished CLI. The mechanism is identical to <a href="index.html">the GUI mock</a>: extraction is a draft, business metadata is never editable, a conflict is named and never silently resolved, and composition only ever draws from pre-approved modules. Reusing the same repo palette (dark surface, status red for the conflict, status green for confirmation) intentionally, this is the same product, not a different one.</p>
+  <p class="footnote">Low-fidelity wireframe, not a finished CLI. Click <b>[1]/[2]/[3]</b> above to switch input modes, same mechanism underneath in all three: extraction is a draft, the context bar (tier/budget/owner/region) is never editable from any of them, a conflict is named and never silently resolved, and composition only ever draws from pre-approved modules. The context bar is the k9s-style touch on purpose: business constraints stay visible the entire session, not just at confirm time.</p>
 </body>
 </html>

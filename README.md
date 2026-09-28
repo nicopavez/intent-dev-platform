@@ -6,7 +6,7 @@ Grounded in Yahoo as a real, public example of the setting: their Platforms org 
 
 ## The problem
 
-Engineers write code fast and then lose days hand-gluing four disconnected platform capabilities (Provisioning, Security & Compliance, Observability, Traffic Management) to get a simple microservice into production. This is a 6-month plan to replace that manual "glue" with an **AI intent layer**: a developer describes what they're deploying, however they already have it (a one-line blurb, a POC repo, a legacy service to modernize), the agent shows back what it understood and composes it from pre-approved, human-authored modules, and a person still approves every change before it ships.
+Engineers write code fast and then lose days hand-gluing four disconnected platform capabilities (Provisioning, Security & Compliance, Observability, Traffic Management) to get a simple microservice into production. This is a 6-month plan to replace that manual "glue" with an **AI intent layer**, internally named **Shepherd**: a developer describes what they're deploying, however they already have it (a one-line blurb, a POC repo, a legacy service to modernize), the agent shows back what it understood and composes it from pre-approved, human-authored modules, and a person still approves every change before it ships.
 
 ## What's here
 
@@ -16,8 +16,8 @@ Engineers write code fast and then lose days hand-gluing four disconnected platf
 | [docs/02-prd.md](docs/02-prd.md) | Main deliverable: Problem Formulation, Solution Definition, Technical Implications |
 | [docs/03-event-model.md](docs/03-event-model.md) | The intent to production mechanism, walked command by command |
 | [diagrams/](diagrams/) | Mermaid sources for the path to production (before/after), the event model, and communication flow, plus the success-metrics chart (light/dark SVG) |
-| [mockups/index.html](mockups/index.html) | Low-fidelity GUI wireframe: before/after, confirm screen, generated PR |
-| [mockups/tui.html](mockups/tui.html) | Same mechanism as a terminal session, for developers who'd rather stay in the CLI |
+| [mockups/index.html](mockups/index.html) | Shepherd's GUI: before/after, all three input modes (blurb, POC repo, legacy repo), confirm screen, generated PR |
+| [mockups/tui.html](mockups/tui.html) | Shepherd's CLI/TUI: same three input modes as a terminal session, k9s-style persistent context bar |
 | [appendix/ai-prompts.md](appendix/ai-prompts.md) | Representative AI prompts used to accelerate research and pressure-test trade-offs |
 
 ## Personas

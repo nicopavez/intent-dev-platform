@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Intent Layer: GUI Wireframe</title>
+<title>Shepherd: GUI Wireframe</title>
 <style>
   :root { color-scheme: light; }
   * { box-sizing: border-box; }
@@ -47,12 +47,29 @@
     border: 1px solid #111; background: #fafafa; font-family: inherit;
   }
   textarea { resize: none; height: 54px; }
-  .tabs { display: flex; gap: 6px; margin-bottom: 4px; }
-  .tab {
+  .tabs input[type="radio"] { display: none; }
+  .tab-labels { display: flex; gap: 6px; margin-bottom: 4px; }
+  .tab-labels label {
     border: 1px solid #111; padding: 5px 10px; font-size: 12px;
-    background: #fff; color: #777;
+    background: #fff; color: #777; cursor: pointer;
   }
-  .tab.active { background: #111; color: #fff; font-weight: 600; }
+  #tab-blurb:checked ~ .tab-labels label[for="tab-blurb"],
+  #tab-poc:checked ~ .tab-labels label[for="tab-poc"],
+  #tab-legacy:checked ~ .tab-labels label[for="tab-legacy"] {
+    background: #111; color: #fff; font-weight: 600;
+  }
+  .panel { display: none; }
+  #tab-blurb:checked ~ .panels #panel-blurb { display: block; }
+  #tab-poc:checked ~ .panels #panel-poc { display: block; }
+  #tab-legacy:checked ~ .panels #panel-legacy { display: block; }
+  .scan {
+    border: 1px solid #111; margin-top: 10px; padding: 10px 12px; font-size: 12px;
+    background: #fafafa; font-family: ui-monospace, Consolas, monospace;
+  }
+  .scan .ok { color: #0a0; }
+  .scan .warn { color: #b45f06; }
+  .scan-head { font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: .04em; margin-bottom: 6px; }
+  .diffline.minus { color: #a00; }
   .btn {
     display: inline-block; margin-top: 14px; border: 1px solid #111;
     padding: 8px 14px; font-size: 13px; font-weight: 600; background: #111; color: #fff;
@@ -78,8 +95,8 @@
 </style>
 </head>
 <body>
-  <h1>Intent Layer: before / after, GUI (low-fidelity wireframe)</h1>
-  <p class="sub">Maya's Tuesday afternoon, once her service is code-complete. Referenced from the PRD's use cases. Same mechanism, terminal version: <a href="tui.html">tui.html</a>.</p>
+  <h1>Shepherd: before / after, GUI (low-fidelity wireframe)</h1>
+  <p class="sub">Maya's Tuesday afternoon, once her service is code-complete. All three tabs (blurb, POC repo, legacy repo) are real, click through them. Same mechanism, terminal version: <a href="tui.html">tui.html</a>.</p>
 
   <div class="cols">
     <div class="col">
@@ -98,60 +115,168 @@
     </div>
 
     <div class="col">
-      <div class="col-head">After: one AI intent layer</div>
-      <div class="col-body">
-        <div class="tabs">
-          <div class="tab active">Blurb</div>
-          <div class="tab">POC repo</div>
-          <div class="tab">Legacy repo</div>
-        </div>
-        <label>Describe what you're deploying</label>
-        <textarea readonly>Checkout service, Python, handles about 5k requests a second.</textarea>
-        <div class="btn">Analyze →</div>
-
-        <div class="fixed-panel">
-          <div class="fixed-head">Your team's fixed constraints <span class="tag">read-only, from business metadata</span></div>
-          <table class="fields">
-            <tr><td>Team</td><td>payments-core</td></tr>
-            <tr><td>Risk tier</td><td>2 (set by Security &amp; Compliance)</td></tr>
-            <tr><td>Budget ceiling</td><td>$6,000/mo</td></tr>
-            <tr><td>Owner</td><td>payments-core-lead@</td></tr>
-            <tr><td>Routable regions</td><td>US only</td></tr>
-          </table>
+      <div class="col-head">After: Shepherd (the AI intent layer)</div>
+      <div class="col-body tabs">
+        <input type="radio" name="mode" id="tab-blurb" checked>
+        <input type="radio" name="mode" id="tab-poc">
+        <input type="radio" name="mode" id="tab-legacy">
+        <div class="tab-labels">
+          <label for="tab-blurb">Blurb</label>
+          <label for="tab-poc">POC repo</label>
+          <label for="tab-legacy">Legacy repo</label>
         </div>
 
-        <div class="understood">
-          <div class="understood-head">Here's what I understood (from your description)</div>
-          <table class="fields">
-            <tr><td>Service</td><td>checkout-api</td></tr>
-            <tr><td>Runtime</td><td>python-3.12 &nbsp;<span class="tag">confident</span></td></tr>
-            <tr><td>Expected RPS</td><td>5000 &nbsp;<span class="tag conflict">conflict: exceeds Tier-2 budget sizing</span></td></tr>
-          </table>
-          <div class="rationale">
-            5k RPS at Tier-2 standard sizing would exceed payments-core's $6,000/mo ceiling. Reduce the estimate, or confirm to request a budget exception routed to your owner.
+        <div class="panels">
+          <div class="panel" id="panel-blurb">
+            <label>Describe what you're deploying</label>
+            <textarea readonly>Checkout service, Python, handles about 5k requests a second.</textarea>
+            <div class="btn">Analyze →</div>
+
+            <div class="fixed-panel">
+              <div class="fixed-head">Your team's fixed constraints <span class="tag">read-only, from business metadata</span></div>
+              <table class="fields">
+                <tr><td>Team</td><td>payments-core</td></tr>
+                <tr><td>Risk tier</td><td>2 (set by Security &amp; Compliance)</td></tr>
+                <tr><td>Budget ceiling</td><td>$6,000/mo</td></tr>
+                <tr><td>Owner</td><td>payments-core-lead@</td></tr>
+                <tr><td>Routable regions</td><td>US only</td></tr>
+              </table>
+            </div>
+
+            <div class="understood">
+              <div class="understood-head">Here's what I understood (from your description)</div>
+              <table class="fields">
+                <tr><td>Service</td><td>checkout-api</td></tr>
+                <tr><td>Runtime</td><td>python-3.12 &nbsp;<span class="tag">confident</span></td></tr>
+                <tr><td>Expected RPS</td><td>5000 &nbsp;<span class="tag conflict">conflict: exceeds Tier-2 budget sizing</span></td></tr>
+              </table>
+              <div class="rationale">
+                5k RPS at Tier-2 standard sizing would exceed payments-core's $6,000/mo ceiling. Reduce the estimate, or confirm to request a budget exception routed to your owner.
+              </div>
+              <div class="btn-row">
+                <div class="btn">Confirm →</div>
+                <div class="btn secondary">Correct something</div>
+              </div>
+            </div>
+
+            <div class="pr">
+              <div class="diffline">## Generated PR: checkout-api</div>
+              <div class="diffline plus">+ namespace: checkout-api (tier-2 template v3)</div>
+              <div class="diffline plus">+ iam-role: tier2-standard-service (read-only secrets)</div>
+              <div class="diffline plus">+ lb: us-only, sized for 1k rps (template: web-standard, within budget)</div>
+              <div class="diffline plus">+ dashboards: default tier-2 latency/error/saturation</div>
+              <div class="rationale">
+                <b>Why:</b> Tier-2, set by payments-core's fixed metadata, not this description, maps to the <code>tier2-standard-service</code> IAM template (scoped, no admin actions).
+                RPS confirmed at 1k after the budget conflict above → <code>web-standard</code> LB sizing, US-only per the team's routable regions. All modules pre-approved by Security &amp; Platforms: nothing here is generated from scratch, and nothing above came from raw text alone, only the confirmed record.
+                <br><br><i>Reviewer:</i> approve, request changes, or edit directly. Raw Terraform always visible below (collapsed).
+              </div>
+            </div>
           </div>
-          <div class="btn-row">
-            <div class="btn">Confirm →</div>
-            <div class="btn secondary">Correct something</div>
-          </div>
-        </div>
 
-        <div class="pr">
-          <div class="diffline">## Generated PR: checkout-api</div>
-          <div class="diffline plus">+ namespace: checkout-api (tier-2 template v3)</div>
-          <div class="diffline plus">+ iam-role: tier2-standard-service (read-only secrets)</div>
-          <div class="diffline plus">+ lb: us-only, sized for 1k rps (template: web-standard, within budget)</div>
-          <div class="diffline plus">+ dashboards: default tier-2 latency/error/saturation</div>
-          <div class="rationale">
-            <b>Why:</b> Tier-2, set by payments-core's fixed metadata, not this description, maps to the <code>tier2-standard-service</code> IAM template (scoped, no admin actions).
-            RPS confirmed at 1k after the budget conflict above → <code>web-standard</code> LB sizing, US-only per the team's routable regions. All modules pre-approved by Security &amp; Platforms: nothing here is generated from scratch, and nothing above came from raw text alone, only the confirmed record.
-            <br><br><i>Reviewer:</i> approve, request changes, or edit directly. Raw Terraform always visible below (collapsed).
+          <div class="panel" id="panel-poc">
+            <label>Point Shepherd at a repo (never executed, read-only)</label>
+            <input value="./checkout-poc" readonly>
+            <div class="btn">Analyze →</div>
+
+            <div class="scan">
+              <div class="scan-head">Repo scan</div>
+              <div><span class="ok">✓</span> language&nbsp;&nbsp;&nbsp;python 3.12 (from pyproject.toml)</div>
+              <div><span class="ok">✓</span> framework&nbsp;&nbsp;fastapi</div>
+              <div><span class="ok">✓</span> dependencies&nbsp;23 packages, none flagged</div>
+              <div><span class="warn">⚠</span> no Dockerfile, inferring runtime from pyproject.toml</div>
+              <div><span class="warn">⚠</span> no CI config, can't infer traffic from history</div>
+            </div>
+
+            <div class="fixed-panel">
+              <div class="fixed-head">Your team's fixed constraints <span class="tag">read-only, from business metadata</span></div>
+              <table class="fields">
+                <tr><td>Team</td><td>payments-core</td></tr>
+                <tr><td>Risk tier</td><td>2 (set by Security &amp; Compliance)</td></tr>
+                <tr><td>Budget ceiling</td><td>$6,000/mo</td></tr>
+                <tr><td>Owner</td><td>payments-core-lead@</td></tr>
+                <tr><td>Routable regions</td><td>US only</td></tr>
+              </table>
+            </div>
+
+            <div class="understood">
+              <div class="understood-head">Here's what I understood (from the repo)</div>
+              <table class="fields">
+                <tr><td>Service</td><td>checkout-poc &rarr; suggested checkout-api</td></tr>
+                <tr><td>Runtime</td><td>python-3.12 &nbsp;<span class="tag">confident, from repo</span></td></tr>
+                <tr><td>Expected RPS</td><td><span class="tag conflict">needs input: no CI/load-test data in this repo</span></td></tr>
+              </table>
+              <div class="rationale">
+                The repo has no signal for expected traffic. Provide an estimate to continue: <input style="width:80px; display:inline-block;" value="1000">
+              </div>
+              <div class="btn-row">
+                <div class="btn">Confirm →</div>
+                <div class="btn secondary">Correct something</div>
+              </div>
+            </div>
+
+            <div class="pr">
+              <div class="diffline">## Generated PR: checkout-api (from POC)</div>
+              <div class="diffline plus">+ namespace: checkout-api (tier-2 template v3)</div>
+              <div class="diffline plus">+ iam-role: tier2-standard-service (read-only secrets)</div>
+              <div class="diffline plus">+ lb: us-only, sized for 1k rps (template: web-standard)</div>
+              <div class="rationale">
+                Source repo was read, never executed. Static analysis only (FR-08). Runtime came from the repo; traffic came from you, because the repo had no signal for it.
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" id="panel-legacy">
+            <label>Point Shepherd at an existing service (never executed, read-only)</label>
+            <input value="./legacy-checkout" readonly>
+            <div class="btn">Analyze --modernize →</div>
+
+            <div class="scan">
+              <div class="scan-head">Diff against current approved templates</div>
+              <div><span class="warn">⚠</span> iam-role&nbsp;&nbsp;scoped to secretsmanager:* (template: read-only, named secrets only)</div>
+              <div><span class="warn">⚠</span> lb config&nbsp;classic-lb pattern (deprecated; template: web-standard)</div>
+              <div><span class="ok">✓</span> namespace&nbsp;matches current provisioning template</div>
+              <div><span class="ok">✓</span> dashboards&nbsp;present, matches current defaults</div>
+            </div>
+
+            <div class="fixed-panel">
+              <div class="fixed-head">Your team's fixed constraints <span class="tag">read-only, from business metadata</span></div>
+              <table class="fields">
+                <tr><td>Team</td><td>payments-core</td></tr>
+                <tr><td>Risk tier</td><td>2 (set by Security &amp; Compliance)</td></tr>
+                <tr><td>Owner</td><td>payments-core-lead@</td></tr>
+                <tr><td>Routable regions</td><td>US only</td></tr>
+              </table>
+            </div>
+
+            <div class="understood">
+              <div class="understood-head">Here's what I understood (a modernization plan, not a fresh deploy)</div>
+              <table class="fields">
+                <tr><td>Service</td><td>checkout-legacy</td></tr>
+                <tr><td>Runtime</td><td>python-3.9 (3.12 available, not required)</td></tr>
+                <tr><td>Action</td><td>narrow IAM scope, migrate LB to web-standard template</td></tr>
+              </table>
+              <div class="btn-row">
+                <div class="btn">Confirm modernization plan →</div>
+                <div class="btn secondary">Correct something</div>
+              </div>
+            </div>
+
+            <div class="pr">
+              <div class="diffline">## Generated PR: checkout-legacy (modernization)</div>
+              <div class="diffline minus">- iam-role: secretsmanager:* (broad)</div>
+              <div class="diffline plus">+ iam-role: tier2-standard-service (read-only, named secrets only)</div>
+              <div class="diffline minus">- lb: classic-lb (deprecated)</div>
+              <div class="diffline plus">+ lb: web-standard (current template)</div>
+              <div class="rationale">
+                Flagged as a diff against a live service, not a new deploy. Nothing changes until this merges.
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <p class="footnote">Low-fidelity wireframe, not a visual design. Grayscale intentional: this is a mechanism sketch, not a brand exercise. Two panels are deliberately separate: the fixed constraints panel is never editable here, it's read from business metadata, while the "here's what I understood" panel is the developer's own description and is exactly what she can correct. The confirm step is the safety checkpoint, not the input format: both panels appear whether the source was this blurb, a POC repo, or a legacy repo.</p>
+  <p class="footnote">Low-fidelity wireframe, not a visual design. Grayscale intentional: this is a mechanism sketch, not a brand exercise. Two panels are deliberately separate in all three tabs: the fixed constraints panel is never editable, it's read from business metadata, while the "here's what I understood" panel is what Shepherd inferred (from text or from a repo) and is exactly what she can correct. The confirm step is the safety checkpoint, not the input format: the same two-panel pattern appears whether the source was a blurb, a POC repo, or a legacy repo.</p>
 </body>
 </html>
