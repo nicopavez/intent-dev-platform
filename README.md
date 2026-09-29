@@ -16,7 +16,7 @@ Engineers write code fast and then lose days hand-gluing four disconnected platf
 | [docs/02-prd.md](docs/02-prd.md) | Main deliverable: Problem Formulation, Solution Definition, Technical Implications |
 | [docs/03-event-model.md](docs/03-event-model.md) | The intent to production mechanism, walked command by command |
 | [diagrams/](diagrams/) | Mermaid sources for the path to production (before/after), the event model, and communication flow, plus the success-metrics chart (light/dark SVG) |
-| [mockups/index.html](mockups/index.html) | Shepherd's GUI: before/after, all three input modes (blurb, POC repo, legacy repo), confirm screen, generated PR |
+| [mockups/index.html](mockups/index.html) | Shepherd's GUI, inside a platform catalog: browse services, self-service actions, all three input modes, confirm, PR review, service scorecard, audit log |
 | [mockups/tui.html](mockups/tui.html) | Shepherd's CLI/TUI: same three input modes as a terminal session, k9s-style persistent context bar |
 | [appendix/ai-prompts.md](appendix/ai-prompts.md) | Representative AI prompts used to accelerate research and pressure-test trade-offs |
 

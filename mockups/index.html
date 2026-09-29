@@ -4,279 +4,617 @@
 <meta charset="utf-8">
 <title>Shepherd: GUI Wireframe</title>
 <style>
-  :root { color-scheme: light; }
+  :root {
+    color-scheme: light;
+    --bg: #f6f7fb;
+    --surface: #ffffff;
+    --border: #e5e7eb;
+    --border-soft: #eef0f4;
+    --text: #101828;
+    --text-muted: #667085;
+    --text-faint: #98a2b3;
+    --accent: #4f46e5;
+    --accent-soft: #eef2ff;
+    --accent-border: #c7d2fe;
+    --green: #067647; --green-soft: #ecfdf3; --green-border: #abefc6;
+    --amber: #b54708; --amber-soft: #fffaeb; --amber-border: #fedf89;
+    --red: #b42318; --red-soft: #fef3f2; --red-border: #fda29b;
+    --gray-soft: #f2f4f7; --gray-border: #d0d5dd;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(16,24,40,.04);
+  }
   * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
-    background: #fff;
-    color: #111;
-    margin: 0;
-    padding: 32px 24px 64px;
+    font-family: Inter, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
   }
-  h1 { font-size: 20px; margin: 0 0 4px; }
-  .sub { color: #555; font-size: 13px; margin: 0 0 28px; }
-  .cols { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
-  .col { flex: 1 1 380px; min-width: 320px; border: 1px solid #111; }
-  .col-head {
-    border-bottom: 1px solid #111;
-    padding: 10px 14px;
-    font-weight: 600;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: .04em;
-  }
-  .col-body { padding: 16px; }
-  .box { border: 1px dashed #999; padding: 10px 12px; margin-bottom: 10px; font-size: 13px; }
-  .box.tool { display: flex; justify-content: space-between; align-items: center; }
-  .tag { border: 1px solid #111; font-size: 10px; padding: 1px 6px; border-radius: 3px; }
-  .tag.low { border-style: dashed; font-weight: 600; }
-  .tag.conflict { background: #111; color: #fff; font-weight: 600; }
-  .fixed-panel {
-    border: 1px solid #111; margin-top: 16px; padding: 12px; font-size: 12px;
-    background: #fff;
-  }
-  .fixed-head {
-    font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: .04em;
-    margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
-  }
-  .fixed-head .tag { font-size: 9px; text-transform: none; letter-spacing: 0; }
-  .arrow { text-align: center; color: #777; font-size: 12px; margin: 6px 0; }
-  label { display: block; font-size: 11px; color: #555; margin: 10px 0 3px; }
-  input, select, textarea {
-    width: 100%; font-size: 13px; padding: 6px 8px;
-    border: 1px solid #111; background: #fafafa; font-family: inherit;
-  }
-  textarea { resize: none; height: 54px; }
+  a { color: var(--accent); }
+  svg.icon { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; vertical-align: -3px; }
+  svg.icon.fill { fill: currentColor; stroke: none; }
+
+  /* ---- top-level intro (outside the app chrome) ---- */
+  .intro { padding: 20px 24px 0; max-width: 1180px; margin: 0 auto; }
+  .intro h1 { font-size: 17px; margin: 0 0 3px; }
+  .intro .sub { color: var(--text-muted); font-size: 12.5px; margin: 0 0 16px; }
+
+  /* ---- app shell ---- */
+  .app { max-width: 1180px; margin: 0 auto 48px; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; background: var(--surface); box-shadow: 0 1px 3px rgba(16,24,40,.06); }
+  .app > input { position: absolute; opacity: 0; pointer-events: none; }
+
+  .sidebar { width: 208px; flex-shrink: 0; background: #fbfbfd; border-right: 1px solid var(--border); padding: 16px 10px; }
+  .brand { display: flex; align-items: center; gap: 8px; padding: 4px 8px 16px; font-weight: 700; font-size: 14px; color: var(--text); }
+  .brand .mark { width: 22px; height: 22px; border-radius: 6px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; }
+  .navitem { display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 7px; color: var(--text-muted); font-size: 13px; font-weight: 500; cursor: pointer; margin-bottom: 1px; border-left: 2px solid transparent; }
+  .navitem:hover { background: var(--gray-soft); color: var(--text); }
+  .navitem .count { margin-left: auto; font-size: 11px; color: var(--text-faint); font-weight: 600; }
+  .nav-active { background: var(--accent-soft); color: var(--accent); border-left-color: var(--accent); }
+  .nav-active .count { color: var(--accent); }
+  .sidebar .divider { height: 1px; background: var(--border-soft); margin: 10px 6px; }
+  .sidebar .foot { padding: 8px 9px; font-size: 11px; color: var(--text-faint); }
+
+  .main-wrap { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .topbar { height: 52px; flex-shrink: 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+  .search { display: flex; align-items: center; gap: 6px; background: var(--gray-soft); border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; color: var(--text-faint); font-size: 12.5px; width: 240px; }
+  .avatar { width: 26px; height: 26px; border-radius: 50%; background: #ffe4a8; color: #7a4a03; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .who { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-muted); }
+
+  .content { padding: 26px 28px 40px; }
+  .screen { display: none; }
+
+  #nav-catalog:checked ~ .main-wrap #screen-catalog,
+  #nav-selfservice:checked ~ .main-wrap #screen-selfservice,
+  #nav-provision:checked ~ .main-wrap #screen-provision,
+  #nav-review:checked ~ .main-wrap #screen-review,
+  #nav-entity:checked ~ .main-wrap #screen-entity,
+  #nav-runs:checked ~ .main-wrap #screen-runs { display: block; }
+
+  #nav-catalog:checked ~ .sidebar label[for="nav-catalog"],
+  #nav-entity:checked ~ .sidebar label[for="nav-catalog"] { background: var(--accent-soft); color: var(--accent); border-left-color: var(--accent); }
+  #nav-selfservice:checked ~ .sidebar label[for="nav-selfservice"],
+  #nav-provision:checked ~ .sidebar label[for="nav-selfservice"],
+  #nav-review:checked ~ .sidebar label[for="nav-selfservice"] { background: var(--accent-soft); color: var(--accent); border-left-color: var(--accent); }
+  #nav-runs:checked ~ .sidebar label[for="nav-runs"] { background: var(--accent-soft); color: var(--accent); border-left-color: var(--accent); }
+
+  .crumb { font-size: 11.5px; color: var(--text-faint); font-weight: 600; letter-spacing: .02em; text-transform: uppercase; margin-bottom: 6px; }
+  .crumb .sep { margin: 0 5px; }
+  .page-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; }
+  .page-head h2 { font-size: 19px; margin: 0 0 4px; }
+  .page-head .desc { color: var(--text-muted); font-size: 13px; max-width: 560px; }
+
+  .btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid transparent; line-height: 1.2; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #4338ca; }
+  .btn-secondary { background: #fff; color: var(--text); border-color: var(--gray-border); }
+  .btn-secondary:hover { background: var(--gray-soft); }
+  .btn-row { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+
+  .pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 600; padding: 2px 9px; border-radius: 100px; border: 1px solid; white-space: nowrap; }
+  .pill-blue { background: var(--accent-soft); color: var(--accent); border-color: var(--accent-border); }
+  .pill-green { background: var(--green-soft); color: var(--green); border-color: var(--green-border); }
+  .pill-amber { background: var(--amber-soft); color: var(--amber); border-color: var(--amber-border); }
+  .pill-red { background: var(--red-soft); color: var(--red); border-color: var(--red-border); }
+  .pill-gray { background: var(--gray-soft); color: var(--text-muted); border-color: var(--gray-border); }
+
+  /* ---- stat strip ---- */
+  .stats { display: flex; gap: 12px; margin-bottom: 18px; }
+  .stat { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; background: var(--surface); min-width: 120px; }
+  .stat .n { font-size: 20px; font-weight: 700; }
+  .stat .l { font-size: 11.5px; color: var(--text-muted); }
+
+  /* ---- table ---- */
+  .table-wrap { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); box-shadow: var(--shadow); }
+  table.dt { width: 100%; border-collapse: collapse; }
+  table.dt th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-faint); font-weight: 600; padding: 10px 16px; background: #fbfbfd; border-bottom: 1px solid var(--border); }
+  table.dt td { padding: 11px 16px; border-bottom: 1px solid var(--border-soft); font-size: 13px; vertical-align: middle; }
+  table.dt tr:last-child td { border-bottom: none; }
+  table.dt tr.clickable { cursor: pointer; }
+  table.dt tr.clickable:hover { background: #fafaff; }
+  .svc-name { font-weight: 600; color: var(--text); }
+  .svc-name .arrow-hint { color: var(--text-faint); margin-left: 4px; font-weight: 400; }
+  .row-link { font-weight: 600; color: var(--text); cursor: pointer; display: inline-block; }
+  .row-link:hover { color: var(--accent); }
+  .row-link .arrow-hint { color: var(--text-faint); margin-left: 4px; font-weight: 400; }
+  .row-link:hover .arrow-hint { color: var(--accent); }
+  .muted { color: var(--text-muted); }
+
+  /* ---- self-service cards ---- */
+  .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .action-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; background: var(--surface); box-shadow: var(--shadow); cursor: pointer; display: block; }
+  .action-card:hover { border-color: var(--accent-border); box-shadow: 0 2px 8px rgba(79,70,229,.08); }
+  .action-card.disabled { cursor: default; opacity: .55; }
+  .action-card.disabled:hover { border-color: var(--border); box-shadow: var(--shadow); }
+  .action-card .icon-badge { width: 32px; height: 32px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+  .action-card.disabled .icon-badge { background: var(--gray-soft); color: var(--text-faint); }
+  .action-card h3 { font-size: 14px; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+  .action-card .strike { text-decoration: line-through; color: var(--text-muted); }
+  .action-card p { font-size: 12.5px; color: var(--text-muted); margin: 0; line-height: 1.5; }
+
+  /* ---- provision flow (tabs) ---- */
+  .flow-grid { display: grid; grid-template-columns: 1fr; gap: 0; }
   .tabs input[type="radio"] { display: none; }
-  .tab-labels { display: flex; gap: 6px; margin-bottom: 4px; }
-  .tab-labels label {
-    border: 1px solid #111; padding: 5px 10px; font-size: 12px;
-    background: #fff; color: #777; cursor: pointer;
-  }
+  .tab-labels { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .tab-labels label { padding: 8px 4px; margin-right: 18px; font-size: 13px; font-weight: 600; color: var(--text-faint); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
   #tab-blurb:checked ~ .tab-labels label[for="tab-blurb"],
   #tab-poc:checked ~ .tab-labels label[for="tab-poc"],
-  #tab-legacy:checked ~ .tab-labels label[for="tab-legacy"] {
-    background: #111; color: #fff; font-weight: 600;
-  }
+  #tab-legacy:checked ~ .tab-labels label[for="tab-legacy"] { color: var(--accent); border-bottom-color: var(--accent); }
   .panel { display: none; }
   #tab-blurb:checked ~ .panels #panel-blurb { display: block; }
   #tab-poc:checked ~ .panels #panel-poc { display: block; }
   #tab-legacy:checked ~ .panels #panel-legacy { display: block; }
-  .scan {
-    border: 1px solid #111; margin-top: 10px; padding: 10px 12px; font-size: 12px;
-    background: #fafafa; font-family: ui-monospace, Consolas, monospace;
-  }
-  .scan .ok { color: #0a0; }
-  .scan .warn { color: #b45f06; }
-  .scan-head { font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: .04em; margin-bottom: 6px; }
-  .diffline.minus { color: #a00; }
-  .btn {
-    display: inline-block; margin-top: 14px; border: 1px solid #111;
-    padding: 8px 14px; font-size: 13px; font-weight: 600; background: #111; color: #fff;
-  }
-  .btn.secondary { background: #fff; color: #111; margin-left: 8px; }
-  .btn-row { display: flex; align-items: center; }
-  .understood {
-    border: 1px solid #111; margin-top: 16px; padding: 12px; font-size: 12px;
-    background: #f7f7f7;
-  }
-  .understood-head { font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: .04em; margin-bottom: 8px; }
-  .fields { width: 100%; border-collapse: collapse; }
-  .fields td { padding: 4px 0; border-bottom: 1px dashed #ccc; font-size: 12px; }
-  .fields td:first-child { color: #555; width: 40%; }
-  .pr {
-    border: 1px solid #111; margin-top: 16px; padding: 12px; font-size: 12px; font-family: ui-monospace, Consolas, monospace;
-    background: #f7f7f7;
-  }
-  .pr .diffline { padding: 1px 0; }
-  .plus { color: #0a0; }
-  .rationale { font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size: 12px; color: #333; margin-top: 8px; border-top: 1px dashed #999; padding-top: 8px; }
-  .footnote { font-size: 11px; color: #777; margin-top: 28px; }
+
+  .field-label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin: 0 0 6px; }
+  .mock-input { width: 100%; font-size: 13px; padding: 9px 11px; border: 1px solid var(--gray-border); border-radius: 8px; background: #fbfbfd; font-family: inherit; color: var(--text); }
+  textarea.mock-input { resize: none; height: 56px; }
+
+  .panel-box { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-top: 14px; background: var(--surface); }
+  .panel-box.subtle { background: #fbfbfd; }
+  .panel-box .box-head { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; color: var(--text-faint); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .kv { width: 100%; border-collapse: collapse; }
+  .kv td { padding: 5px 0; border-bottom: 1px dashed var(--border-soft); font-size: 12.5px; }
+  .kv td:first-child { color: var(--text-muted); width: 42%; }
+  .kv tr:last-child td { border-bottom: none; }
+
+  .rationale { font-size: 12.5px; color: var(--text-muted); margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border-soft); line-height: 1.5; }
+  .rationale code { background: var(--gray-soft); padding: 1px 5px; border-radius: 4px; font-size: 11.5px; }
+
+  .scan-line { font-family: ui-monospace, Consolas, monospace; font-size: 12px; padding: 3px 0; display: flex; gap: 8px; align-items: baseline; }
+  .scan-line svg.icon { width: 13px; height: 13px; }
+  .scan-line.ok svg { stroke: var(--green); }
+  .scan-line.warn svg { stroke: var(--amber); }
+
+  .diff-box { font-family: ui-monospace, Consolas, monospace; font-size: 12px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .diff-box .diff-title { background: #fbfbfd; padding: 7px 12px; font-family: Inter, -apple-system, sans-serif; font-size: 11.5px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+  .diffline { padding: 3px 12px; }
+  .diffline.plus { background: var(--green-soft); color: var(--green); }
+  .diffline.minus { background: var(--red-soft); color: var(--red); }
+
+  /* ---- review screen ---- */
+  .review-grid { display: grid; grid-template-columns: 1fr 260px; gap: 18px; align-items: start; }
+  .pr-title { font-size: 17px; font-weight: 700; margin: 0 0 4px; }
+  .pr-meta { font-size: 12.5px; color: var(--text-muted); margin-bottom: 18px; }
+  .side-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; background: var(--surface); margin-bottom: 14px; }
+  .side-card h4 { font-size: 11.5px; text-transform: uppercase; letter-spacing: .03em; color: var(--text-faint); margin: 0 0 10px; }
+  .audit-row { font-size: 12px; padding: 5px 0; border-bottom: 1px dashed var(--border-soft); color: var(--text-muted); }
+  .audit-row:last-child { border-bottom: none; }
+  .audit-row b { color: var(--text); font-weight: 600; }
+  .reviewer-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .reviewer-row .avatar { background: #d1e9ff; color: #175cd3; }
+  .reviewer-row .rname { font-size: 12.5px; font-weight: 600; }
+  .reviewer-row .rrole { font-size: 11px; color: var(--text-muted); }
+  .guardrail { font-size: 11.5px; color: var(--text-muted); margin-top: 10px; line-height: 1.5; }
+
+  /* ---- entity screen ---- */
+  .entity-head { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .entity-head h2 { margin: 0; font-size: 19px; }
+  .entity-sub { font-size: 12.5px; color: var(--text-muted); margin-bottom: 18px; }
+  .etabs input[type="radio"] { display: none; }
+  .etab-labels { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .etab-labels label { padding: 8px 4px; margin-right: 18px; font-size: 13px; font-weight: 600; color: var(--text-faint); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  #etab-props:checked ~ .etab-labels label[for="etab-props"],
+  #etab-score:checked ~ .etab-labels label[for="etab-score"],
+  #etab-runs:checked ~ .etab-labels label[for="etab-runs"] { color: var(--accent); border-bottom-color: var(--accent); }
+  .epanel { display: none; }
+  #etab-props:checked ~ .epanels #epanel-props { display: block; }
+  #etab-score:checked ~ .epanels #epanel-score { display: block; }
+  #etab-runs:checked ~ .epanels #epanel-runs { display: block; }
+
+  .score-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border-soft); font-size: 13px; }
+  .score-row:last-child { border-bottom: none; }
+  .score-row svg.icon { width: 15px; height: 15px; }
+  .score-row.pass svg { stroke: var(--green); }
+  .score-row.fail svg { stroke: var(--red); }
+  .score-row .rule-note { color: var(--text-muted); font-size: 12px; }
+
+  .footnote { max-width: 1180px; margin: 18px auto 0; padding: 0 24px; font-size: 11.5px; color: var(--text-faint); line-height: 1.6; }
 </style>
 </head>
 <body>
-  <h1>Shepherd: before / after, GUI (low-fidelity wireframe)</h1>
-  <p class="sub">Maya's Tuesday afternoon, once her service is code-complete. All three tabs (blurb, POC repo, legacy repo) are real, click through them. Same mechanism, terminal version: <a href="tui.html">tui.html</a>.</p>
 
-  <div class="cols">
-    <div class="col">
-      <div class="col-head">Today: 4 disconnected tools</div>
-      <div class="col-body">
-        <div class="box tool">Provisioning console <span class="tag">manual YAML</span></div>
-        <div class="arrow">↓ hand-write cluster/namespace config</div>
-        <div class="box tool">Security & Compliance console <span class="tag">manual IAM</span></div>
-        <div class="arrow">↓ request secrets, scope IAM role</div>
-        <div class="box tool">Observability console <span class="tag">manual thresholds</span></div>
-        <div class="arrow">↓ configure dashboards, alerts</div>
-        <div class="box tool">Traffic Management console <span class="tag">manual LB/DNS</span></div>
-        <div class="arrow">↓ open ticket, wait on review</div>
-        <div class="box" style="border-style:solid;">Staging: days later</div>
+  <svg style="display:none">
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+  </svg>
+
+  <div class="intro">
+    <h1>Shepherd, inside the platform catalog (GUI wireframe)</h1>
+    <p class="sub">Shepherd isn't a standalone tool, it's one self-service action inside the internal developer portal the org already has open all day. Click through: Catalog &rarr; Self-service &rarr; Provision a new service &rarr; Review, or open <b>checkout-api</b> from the catalog for its Properties / Scorecard / Runs. Same mechanism, terminal version: <a href="tui.html">tui.html</a>.</p>
+  </div>
+
+  <div class="app">
+    <input type="radio" name="nav" id="nav-catalog" checked>
+    <input type="radio" name="nav" id="nav-selfservice">
+    <input type="radio" name="nav" id="nav-provision">
+    <input type="radio" name="nav" id="nav-review">
+    <input type="radio" name="nav" id="nav-entity">
+    <input type="radio" name="nav" id="nav-runs">
+
+    <aside class="sidebar">
+      <div class="brand"><span class="mark">P</span> Platform Catalog</div>
+      <label class="navitem" for="nav-catalog"><svg class="icon"><use href="#i-grid"/></svg> Catalog <span class="count">42</span></label>
+      <label class="navitem" for="nav-selfservice"><svg class="icon"><use href="#i-zap"/></svg> Self-service</label>
+      <label class="navitem" for="nav-runs"><svg class="icon"><use href="#i-list"/></svg> Runs <span class="count">128</span></label>
+      <div class="divider"></div>
+      <div class="foot">Signed in as Maya Chen<br>payments-core</div>
+    </aside>
+
+    <div class="main-wrap">
+      <div class="topbar">
+        <div class="search"><svg class="icon"><use href="#i-search"/></svg> Search services, teams, runs...</div>
+        <div class="who"><span class="avatar">MC</span> Maya Chen</div>
       </div>
-    </div>
 
-    <div class="col">
-      <div class="col-head">After: Shepherd (the AI intent layer)</div>
-      <div class="col-body tabs">
-        <input type="radio" name="mode" id="tab-blurb" checked>
-        <input type="radio" name="mode" id="tab-poc">
-        <input type="radio" name="mode" id="tab-legacy">
-        <div class="tab-labels">
-          <label for="tab-blurb">Blurb</label>
-          <label for="tab-poc">POC repo</label>
-          <label for="tab-legacy">Legacy repo</label>
+      <div class="content">
+
+        <!-- ================= CATALOG ================= -->
+        <div class="screen" id="screen-catalog">
+          <div class="page-head">
+            <div>
+              <h2>Service catalog</h2>
+              <div class="desc">Every service, its owning team, and the business metadata that scopes what it's allowed to do.</div>
+            </div>
+            <label for="nav-selfservice" class="btn btn-primary">+ New service</label>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><div class="n">42</div><div class="l">Services</div></div>
+            <div class="stat"><div class="n">8</div><div class="l">Teams</div></div>
+            <div class="stat"><div class="n">3</div><div class="l">Tier-1</div></div>
+            <div class="stat"><div class="n">76%</div><div class="l">Gold/Silver scorecard</div></div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="dt">
+              <tr><th>Service</th><th>Team</th><th>Tier</th><th>Scorecard</th><th>Budget</th><th>Region</th><th>Last deploy</th></tr>
+              <tr class="clickable">
+                <td><label for="nav-entity" class="row-link">checkout-api <span class="arrow-hint">&rarr;</span></label></td>
+                <td class="muted">payments-core</td>
+                <td><span class="pill pill-blue">Tier-2</span></td>
+                <td><span class="pill pill-gray">Silver</span></td>
+                <td class="muted">$6,000/mo</td>
+                <td class="muted">US</td>
+                <td class="muted">2 hours ago</td>
+              </tr>
+              <tr><td class="svc-name">fraud-scoring</td><td class="muted">payments-core</td><td><span class="pill pill-red">Tier-1</span></td><td><span class="pill pill-amber">Gold</span></td><td class="muted">$18,000/mo</td><td class="muted">US, EU</td><td class="muted">3 days ago</td></tr>
+              <tr><td class="svc-name">ledger-writer</td><td class="muted">payments-core</td><td><span class="pill pill-red">Tier-1</span></td><td><span class="pill pill-amber">Gold</span></td><td class="muted">$40,000/mo</td><td class="muted">US</td><td class="muted">1 month ago</td></tr>
+              <tr><td class="svc-name">notifications-svc</td><td class="muted">growth</td><td><span class="pill pill-blue">Tier-2</span></td><td><span class="pill pill-gray">Silver</span></td><td class="muted">$2,000/mo</td><td class="muted">US, EU, APAC</td><td class="muted">5 hours ago</td></tr>
+              <tr><td class="svc-name">webhook-relay</td><td class="muted">payments-core</td><td><span class="pill pill-gray">Tier-3</span></td><td><span class="pill pill-gray">Bronze</span></td><td class="muted">$500/mo</td><td class="muted">US</td><td class="muted">1 week ago</td></tr>
+            </table>
+          </div>
         </div>
 
-        <div class="panels">
-          <div class="panel" id="panel-blurb">
-            <label>Describe what you're deploying</label>
-            <textarea readonly>Checkout service, Python, handles about 5k requests a second.</textarea>
-            <div class="btn">Analyze →</div>
-
-            <div class="fixed-panel">
-              <div class="fixed-head">Your team's fixed constraints <span class="tag">read-only, from business metadata</span></div>
-              <table class="fields">
-                <tr><td>Team</td><td>payments-core</td></tr>
-                <tr><td>Risk tier</td><td>2 (set by Security &amp; Compliance)</td></tr>
-                <tr><td>Budget ceiling</td><td>$6,000/mo</td></tr>
-                <tr><td>Owner</td><td>payments-core-lead@</td></tr>
-                <tr><td>Routable regions</td><td>US only</td></tr>
-              </table>
-            </div>
-
-            <div class="understood">
-              <div class="understood-head">Here's what I understood (from your description)</div>
-              <table class="fields">
-                <tr><td>Service</td><td>checkout-api</td></tr>
-                <tr><td>Runtime</td><td>python-3.12 &nbsp;<span class="tag">confident</span></td></tr>
-                <tr><td>Expected RPS</td><td>5000 &nbsp;<span class="tag conflict">conflict: exceeds Tier-2 budget sizing</span></td></tr>
-              </table>
-              <div class="rationale">
-                5k RPS at Tier-2 standard sizing would exceed payments-core's $6,000/mo ceiling. Reduce the estimate, or confirm to request a budget exception routed to your owner.
-              </div>
-              <div class="btn-row">
-                <div class="btn">Confirm →</div>
-                <div class="btn secondary">Correct something</div>
-              </div>
-            </div>
-
-            <div class="pr">
-              <div class="diffline">## Generated PR: checkout-api</div>
-              <div class="diffline plus">+ namespace: checkout-api (tier-2 template v3)</div>
-              <div class="diffline plus">+ iam-role: tier2-standard-service (read-only secrets)</div>
-              <div class="diffline plus">+ lb: us-only, sized for 1k rps (template: web-standard, within budget)</div>
-              <div class="diffline plus">+ dashboards: default tier-2 latency/error/saturation</div>
-              <div class="rationale">
-                <b>Why:</b> Tier-2, set by payments-core's fixed metadata, not this description, maps to the <code>tier2-standard-service</code> IAM template (scoped, no admin actions).
-                RPS confirmed at 1k after the budget conflict above → <code>web-standard</code> LB sizing, US-only per the team's routable regions. All modules pre-approved by Security &amp; Platforms: nothing here is generated from scratch, and nothing above came from raw text alone, only the confirmed record.
-                <br><br><i>Reviewer:</i> approve, request changes, or edit directly. Raw Terraform always visible below (collapsed).
-              </div>
+        <!-- ================= SELF-SERVICE ================= -->
+        <div class="screen" id="screen-selfservice">
+          <div class="crumb">Platform</div>
+          <div class="page-head">
+            <div>
+              <h2>Self-service</h2>
+              <div class="desc">Actions your team can run without opening a platform ticket.</div>
             </div>
           </div>
 
-          <div class="panel" id="panel-poc">
-            <label>Point Shepherd at a repo (never executed, read-only)</label>
-            <input value="./checkout-poc" readonly>
-            <div class="btn">Analyze →</div>
+          <div class="card-grid">
+            <label for="nav-provision" class="action-card">
+              <div class="icon-badge"><svg class="icon"><use href="#i-zap"/></svg></div>
+              <h3>Provision a new service <span class="pill pill-blue">AI-assisted &middot; Shepherd</span></h3>
+              <p>Describe it in a blurb, point Shepherd at a POC repo, or point it at a legacy repo to modernize. Confirm what it understood, a reviewer merges.</p>
+            </label>
 
-            <div class="scan">
-              <div class="scan-head">Repo scan</div>
-              <div><span class="ok">✓</span> language&nbsp;&nbsp;&nbsp;python 3.12 (from pyproject.toml)</div>
-              <div><span class="ok">✓</span> framework&nbsp;&nbsp;fastapi</div>
-              <div><span class="ok">✓</span> dependencies&nbsp;23 packages, none flagged</div>
-              <div><span class="warn">⚠</span> no Dockerfile, inferring runtime from pyproject.toml</div>
-              <div><span class="warn">⚠</span> no CI config, can't infer traffic from history</div>
+            <div class="action-card disabled">
+              <div class="icon-badge"><svg class="icon"><use href="#i-arrow"/></svg></div>
+              <h3>Request a budget exception</h3>
+              <p>Route a budget-ceiling conflict straight to your team's owner for a yes/no, instead of a general platform ticket.</p>
             </div>
 
-            <div class="fixed-panel">
-              <div class="fixed-head">Your team's fixed constraints <span class="tag">read-only, from business metadata</span></div>
-              <table class="fields">
-                <tr><td>Team</td><td>payments-core</td></tr>
-                <tr><td>Risk tier</td><td>2 (set by Security &amp; Compliance)</td></tr>
-                <tr><td>Budget ceiling</td><td>$6,000/mo</td></tr>
-                <tr><td>Owner</td><td>payments-core-lead@</td></tr>
-                <tr><td>Routable regions</td><td>US only</td></tr>
-              </table>
+            <div class="action-card disabled">
+              <div class="icon-badge"><svg class="icon"><use href="#i-arrow"/></svg></div>
+              <h3>Request an IAM exception</h3>
+              <p>For an access pattern outside the pre-approved templates. Routed to Security &amp; Compliance for manual review.</p>
             </div>
 
-            <div class="understood">
-              <div class="understood-head">Here's what I understood (from the repo)</div>
-              <table class="fields">
-                <tr><td>Service</td><td>checkout-poc &rarr; suggested checkout-api</td></tr>
-                <tr><td>Runtime</td><td>python-3.12 &nbsp;<span class="tag">confident, from repo</span></td></tr>
-                <tr><td>Expected RPS</td><td><span class="tag conflict">needs input: no CI/load-test data in this repo</span></td></tr>
-              </table>
-              <div class="rationale">
-                The repo has no signal for expected traffic. Provide an estimate to continue: <input style="width:80px; display:inline-block;" value="1000" readonly>
-              </div>
-              <div class="btn-row">
-                <div class="btn">Confirm →</div>
-                <div class="btn secondary">Correct something</div>
-              </div>
-            </div>
-
-            <div class="pr">
-              <div class="diffline">## Generated PR: checkout-api (from POC)</div>
-              <div class="diffline plus">+ namespace: checkout-api (tier-2 template v3)</div>
-              <div class="diffline plus">+ iam-role: tier2-standard-service (read-only secrets)</div>
-              <div class="diffline plus">+ lb: us-only, sized for 1k rps (template: web-standard)</div>
-              <div class="rationale">
-                Source repo was read, never executed. Static analysis only (FR-08). Runtime came from the repo; traffic came from you, because the repo had no signal for it.
-              </div>
-            </div>
-          </div>
-
-          <div class="panel" id="panel-legacy">
-            <label>Point Shepherd at an existing service (never executed, read-only)</label>
-            <input value="./legacy-checkout" readonly>
-            <div class="btn">Analyze --modernize →</div>
-
-            <div class="scan">
-              <div class="scan-head">Diff against current approved templates</div>
-              <div><span class="warn">⚠</span> iam-role&nbsp;&nbsp;scoped to secretsmanager:* (template: read-only, named secrets only)</div>
-              <div><span class="warn">⚠</span> lb config&nbsp;classic-lb pattern (deprecated; template: web-standard)</div>
-              <div><span class="ok">✓</span> namespace&nbsp;matches current provisioning template</div>
-              <div><span class="ok">✓</span> dashboards&nbsp;present, matches current defaults</div>
-            </div>
-
-            <div class="fixed-panel">
-              <div class="fixed-head">Your team's fixed constraints <span class="tag">read-only, from business metadata</span></div>
-              <table class="fields">
-                <tr><td>Team</td><td>payments-core</td></tr>
-                <tr><td>Risk tier</td><td>2 (set by Security &amp; Compliance)</td></tr>
-                <tr><td>Owner</td><td>payments-core-lead@</td></tr>
-                <tr><td>Routable regions</td><td>US only</td></tr>
-              </table>
-            </div>
-
-            <div class="understood">
-              <div class="understood-head">Here's what I understood (a modernization plan, not a fresh deploy)</div>
-              <table class="fields">
-                <tr><td>Service</td><td>checkout-legacy</td></tr>
-                <tr><td>Runtime</td><td>python-3.9 (3.12 available, not required)</td></tr>
-                <tr><td>Action</td><td>narrow IAM scope, migrate LB to web-standard template</td></tr>
-              </table>
-              <div class="btn-row">
-                <div class="btn">Confirm modernization plan →</div>
-                <div class="btn secondary">Correct something</div>
-              </div>
-            </div>
-
-            <div class="pr">
-              <div class="diffline">## Generated PR: checkout-legacy (modernization)</div>
-              <div class="diffline minus">- iam-role: secretsmanager:* (broad)</div>
-              <div class="diffline plus">+ iam-role: tier2-standard-service (read-only, named secrets only)</div>
-              <div class="diffline minus">- lb: classic-lb (deprecated)</div>
-              <div class="diffline plus">+ lb: web-standard (current template)</div>
-              <div class="rationale">
-                Flagged as a diff against a live service, not a new deploy. Nothing changes until this merges.
-              </div>
+            <div class="action-card disabled">
+              <div class="icon-badge"><svg class="icon"><use href="#i-arrow"/></svg></div>
+              <h3><span class="strike">Scaffold a Terraform module</span> <span class="pill pill-gray">Deprecated</span></h3>
+              <p>The old ticket-based path. Superseded by Provision a new service; kept visible while Shepherd's acceptance rate climbs.</p>
             </div>
           </div>
         </div>
+
+        <!-- ================= PROVISION (blurb / poc / legacy) ================= -->
+        <div class="screen" id="screen-provision">
+          <div class="crumb">Self-service <span class="sep">/</span> Provision a new service</div>
+          <div class="page-head">
+            <div>
+              <h2>Provision a new service</h2>
+              <div class="desc">Shepherd drafts an intent from whatever you already have. You confirm or correct it, nothing composes until you do.</div>
+            </div>
+          </div>
+
+          <div class="flow-grid tabs">
+            <input type="radio" name="mode" id="tab-blurb" checked>
+            <input type="radio" name="mode" id="tab-poc">
+            <input type="radio" name="mode" id="tab-legacy">
+            <div class="tab-labels">
+              <label for="tab-blurb">Blurb</label>
+              <label for="tab-poc">POC repo</label>
+              <label for="tab-legacy">Legacy repo</label>
+            </div>
+
+            <div class="panels">
+              <div class="panel" id="panel-blurb">
+                <span class="field-label">Describe what you're deploying</span>
+                <textarea class="mock-input" readonly>Checkout service, Python, handles about 5k requests a second.</textarea>
+                <div class="btn-row"><div class="btn btn-primary">Analyze <svg class="icon"><use href="#i-arrow"/></svg></div></div>
+
+                <div class="panel-box subtle">
+                  <div class="box-head">Your team's fixed constraints <span class="pill pill-gray">read-only</span></div>
+                  <table class="kv">
+                    <tr><td>Team</td><td>payments-core</td></tr>
+                    <tr><td>Risk tier</td><td>2 (set by Security &amp; Compliance)</td></tr>
+                    <tr><td>Budget ceiling</td><td>$6,000/mo</td></tr>
+                    <tr><td>Owner</td><td>payments-core-lead@</td></tr>
+                    <tr><td>Routable regions</td><td>US only</td></tr>
+                  </table>
+                </div>
+
+                <div class="panel-box">
+                  <div class="box-head">Here's what I understood</div>
+                  <table class="kv">
+                    <tr><td>Service</td><td>checkout-api</td></tr>
+                    <tr><td>Runtime</td><td>python-3.12 &nbsp;<span class="pill pill-green">confident</span></td></tr>
+                    <tr><td>Expected RPS</td><td>5000 &nbsp;<span class="pill pill-red">conflict: exceeds Tier-2 budget sizing</span></td></tr>
+                  </table>
+                  <div class="rationale">5k RPS at Tier-2 standard sizing would exceed payments-core's $6,000/mo ceiling. Reduce the estimate, or confirm to request a budget exception routed to your owner.</div>
+                  <div class="btn-row">
+                    <label for="nav-review" class="btn btn-primary">Confirm <svg class="icon"><use href="#i-arrow"/></svg></label>
+                    <div class="btn btn-secondary">Correct something</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel" id="panel-poc">
+                <span class="field-label">Point Shepherd at a repo (never executed, read-only)</span>
+                <input class="mock-input" value="./checkout-poc" readonly>
+                <div class="btn-row"><div class="btn btn-primary">Analyze <svg class="icon"><use href="#i-arrow"/></svg></div></div>
+
+                <div class="panel-box subtle">
+                  <div class="box-head">Repo scan</div>
+                  <div class="scan-line ok"><svg class="icon"><use href="#i-check"/></svg> language: python 3.12 (from pyproject.toml)</div>
+                  <div class="scan-line ok"><svg class="icon"><use href="#i-check"/></svg> framework: fastapi</div>
+                  <div class="scan-line ok"><svg class="icon"><use href="#i-check"/></svg> dependencies: 23 packages, none flagged</div>
+                  <div class="scan-line warn"><svg class="icon"><use href="#i-x"/></svg> no Dockerfile, inferring runtime from pyproject.toml</div>
+                  <div class="scan-line warn"><svg class="icon"><use href="#i-x"/></svg> no CI config, can't infer traffic from history</div>
+                </div>
+
+                <div class="panel-box subtle">
+                  <div class="box-head">Your team's fixed constraints <span class="pill pill-gray">read-only</span></div>
+                  <table class="kv">
+                    <tr><td>Team</td><td>payments-core</td></tr>
+                    <tr><td>Risk tier</td><td>2 (set by Security &amp; Compliance)</td></tr>
+                    <tr><td>Budget ceiling</td><td>$6,000/mo</td></tr>
+                    <tr><td>Owner</td><td>payments-core-lead@</td></tr>
+                    <tr><td>Routable regions</td><td>US only</td></tr>
+                  </table>
+                </div>
+
+                <div class="panel-box">
+                  <div class="box-head">Here's what I understood</div>
+                  <table class="kv">
+                    <tr><td>Service</td><td>checkout-poc &rarr; suggested checkout-api</td></tr>
+                    <tr><td>Runtime</td><td>python-3.12 &nbsp;<span class="pill pill-green">confident, from repo</span></td></tr>
+                    <tr><td>Expected RPS</td><td><span class="pill pill-red">needs input: no CI/load-test data</span></td></tr>
+                  </table>
+                  <div class="rationale">The repo has no signal for expected traffic. Provide an estimate to continue: <input class="mock-input" style="width:80px; display:inline-block; padding:4px 8px;" value="1000" readonly></div>
+                  <div class="btn-row">
+                    <div class="btn btn-primary">Confirm <svg class="icon"><use href="#i-arrow"/></svg></div>
+                    <div class="btn btn-secondary">Correct something</div>
+                  </div>
+                </div>
+
+                <div class="diff-box" style="margin-top:14px">
+                  <div class="diff-title">Generated PR: checkout-api (from POC)</div>
+                  <div class="diffline plus">+ namespace: checkout-api (tier-2 template v3)</div>
+                  <div class="diffline plus">+ iam-role: tier2-standard-service (read-only secrets)</div>
+                  <div class="diffline plus">+ lb: us-only, sized for 1k rps (template: web-standard)</div>
+                </div>
+                <div class="rationale">Source repo was read, never executed (FR-08). Runtime came from the repo, traffic came from you, since the repo had no signal for it. Same review step as the blurb path, not shown separately here.</div>
+              </div>
+
+              <div class="panel" id="panel-legacy">
+                <span class="field-label">Point Shepherd at an existing service (never executed, read-only)</span>
+                <input class="mock-input" value="./legacy-checkout" readonly>
+                <div class="btn-row"><div class="btn btn-primary">Analyze --modernize <svg class="icon"><use href="#i-arrow"/></svg></div></div>
+
+                <div class="panel-box subtle">
+                  <div class="box-head">Diff against current approved templates</div>
+                  <div class="scan-line warn"><svg class="icon"><use href="#i-x"/></svg> iam-role: scoped to secretsmanager:* (template: read-only, named secrets only)</div>
+                  <div class="scan-line warn"><svg class="icon"><use href="#i-x"/></svg> lb config: classic-lb pattern (deprecated; template: web-standard)</div>
+                  <div class="scan-line ok"><svg class="icon"><use href="#i-check"/></svg> namespace matches current provisioning template</div>
+                  <div class="scan-line ok"><svg class="icon"><use href="#i-check"/></svg> dashboards present, matches current defaults</div>
+                </div>
+
+                <div class="panel-box subtle">
+                  <div class="box-head">Your team's fixed constraints <span class="pill pill-gray">read-only</span></div>
+                  <table class="kv">
+                    <tr><td>Team</td><td>payments-core</td></tr>
+                    <tr><td>Risk tier</td><td>2 (set by Security &amp; Compliance)</td></tr>
+                    <tr><td>Owner</td><td>payments-core-lead@</td></tr>
+                    <tr><td>Routable regions</td><td>US only</td></tr>
+                  </table>
+                </div>
+
+                <div class="panel-box">
+                  <div class="box-head">Here's what I understood: a modernization plan, not a fresh deploy</div>
+                  <table class="kv">
+                    <tr><td>Service</td><td>checkout-legacy</td></tr>
+                    <tr><td>Runtime</td><td>python-3.9 (3.12 available, not required)</td></tr>
+                    <tr><td>Action</td><td>narrow IAM scope, migrate LB to web-standard template</td></tr>
+                  </table>
+                  <div class="btn-row">
+                    <div class="btn btn-primary">Confirm modernization plan <svg class="icon"><use href="#i-arrow"/></svg></div>
+                    <div class="btn btn-secondary">Correct something</div>
+                  </div>
+                </div>
+
+                <div class="diff-box" style="margin-top:14px">
+                  <div class="diff-title">Generated PR: checkout-legacy (modernization)</div>
+                  <div class="diffline minus">- iam-role: secretsmanager:* (broad)</div>
+                  <div class="diffline plus">+ iam-role: tier2-standard-service (read-only, named secrets only)</div>
+                  <div class="diffline minus">- lb: classic-lb (deprecated)</div>
+                  <div class="diffline plus">+ lb: web-standard (current template)</div>
+                </div>
+                <div class="rationale">Flagged as a diff against a live service, not a new deploy. Nothing changes until this merges.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= REVIEW ================= -->
+        <div class="screen" id="screen-review">
+          <div class="crumb">Self-service <span class="sep">/</span> Provision a new service <span class="sep">/</span> Review</div>
+          <div class="pr-title">checkout-api &nbsp;<span class="pill pill-blue">Shepherd-generated</span> &nbsp;<span class="pill pill-amber">Pending review</span></div>
+          <div class="pr-meta">Opened by <b>shepherd-bot</b> on behalf of Maya Chen &middot; into <code>main</code> &middot; 2 minutes ago</div>
+
+          <div class="review-grid">
+            <div>
+              <div class="diff-box">
+                <div class="diff-title">Files changed &middot; provision/checkout-api.tf</div>
+                <div class="diffline plus">+ namespace: checkout-api (tier-2 template v3)</div>
+                <div class="diffline plus">+ iam-role: tier2-standard-service (read-only secrets)</div>
+                <div class="diffline plus">+ lb: us-only, sized for 1k rps (template: web-standard, within budget)</div>
+                <div class="diffline plus">+ dashboards: default tier-2 latency/error/saturation</div>
+              </div>
+              <div class="rationale">
+                <b>Why these choices:</b> Tier-2, set by payments-core's fixed metadata, not this description, maps to the <code>tier2-standard-service</code> IAM template (scoped, no admin actions). RPS confirmed at 1k after the budget conflict surfaced above &rarr; <code>web-standard</code> LB sizing, US-only per the team's routable regions. All modules pre-approved by Security &amp; Platforms: nothing here was generated from scratch, and nothing came from raw text alone, only the confirmed record.
+              </div>
+            </div>
+
+            <div>
+              <div class="side-card">
+                <h4>Reviewer</h4>
+                <div class="reviewer-row">
+                  <span class="avatar">DO</span>
+                  <div><div class="rname">Dev Osei</div><div class="rrole">Senior Platform Engineer</div></div>
+                </div>
+                <div class="btn-row" style="margin-top:0">
+                  <div class="btn btn-primary" style="flex:1; justify-content:center">Approve &amp; merge</div>
+                </div>
+                <div class="btn-row">
+                  <div class="btn btn-secondary" style="flex:1; justify-content:center">Request changes</div>
+                </div>
+                <div class="guardrail">Only a reviewer's approval produces a deploy (FR-06). Shepherd cannot merge its own PR.</div>
+              </div>
+
+              <div class="side-card">
+                <h4>Audit trail (FR-07)</h4>
+                <div class="audit-row"><b>Intent record</b><br>IR-4471, confirmed by Maya Chen</div>
+                <div class="audit-row"><b>Metadata snapshot</b><br>payments-core, captured 2 min ago</div>
+                <div class="audit-row"><b>Template version</b><br>tier2-standard-service v3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= ENTITY: checkout-api ================= -->
+        <div class="screen" id="screen-entity">
+          <div class="crumb">Catalog <span class="sep">/</span> checkout-api</div>
+          <div class="entity-head">
+            <h2>checkout-api</h2>
+            <span class="pill pill-blue">Tier-2</span>
+            <span class="pill pill-gray">Silver</span>
+          </div>
+          <div class="entity-sub">payments-core &middot; owner: payments-core-lead@ &middot; US only</div>
+
+          <div class="etabs">
+            <input type="radio" name="etab" id="etab-props" checked>
+            <input type="radio" name="etab" id="etab-score">
+            <input type="radio" name="etab" id="etab-runs">
+            <div class="etab-labels">
+              <label for="etab-props">Properties</label>
+              <label for="etab-score">Scorecard</label>
+              <label for="etab-runs">Runs</label>
+            </div>
+
+            <div class="epanels">
+              <div class="epanel" id="epanel-props">
+                <div class="panel-box subtle" style="max-width:480px">
+                  <div class="box-head">Business metadata <span class="pill pill-gray">read-only, FR-02</span></div>
+                  <table class="kv">
+                    <tr><td>Team</td><td>payments-core</td></tr>
+                    <tr><td>Risk tier</td><td>2 (set by Security &amp; Compliance)</td></tr>
+                    <tr><td>Budget ceiling</td><td>$6,000/mo</td></tr>
+                    <tr><td>Owner</td><td>payments-core-lead@</td></tr>
+                    <tr><td>Routable regions</td><td>US only</td></tr>
+                  </table>
+                </div>
+                <div class="rationale" style="max-width:480px">Resolved automatically from the system of record. Never set by the developer, never inferred by Shepherd (UC-05).</div>
+              </div>
+
+              <div class="epanel" id="epanel-score">
+                <div class="panel-box" style="max-width:520px">
+                  <div class="box-head">Current level: <span class="pill pill-gray">Silver</span></div>
+                  <div class="score-row pass"><svg class="icon"><use href="#i-check"/></svg> IAM scoped to approved template</div>
+                  <div class="score-row pass"><svg class="icon"><use href="#i-check"/></svg> Dashboards wired to Tier-2 defaults</div>
+                  <div class="score-row pass"><svg class="icon"><use href="#i-check"/></svg> LB sized within budget ceiling</div>
+                  <div class="score-row fail"><svg class="icon"><use href="#i-x"/></svg> Legacy <code>secretsmanager:*</code> scope on 1 upstream dependency <span class="rule-note">(modernization diff proposed, pending review)</span></div>
+                </div>
+              </div>
+
+              <div class="epanel" id="epanel-runs">
+                <div class="table-wrap" style="max-width:640px">
+                  <table class="dt">
+                    <tr><th>Action</th><th>Source</th><th>Status</th><th>When</th></tr>
+                    <tr><td>Provision</td><td class="muted">Blurb</td><td><span class="pill pill-green">Merged</span></td><td class="muted">3 months ago</td></tr>
+                    <tr><td>Modernize</td><td class="muted">Legacy repo</td><td><span class="pill pill-amber">Pending review</span></td><td class="muted">2 hours ago</td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= RUNS (global audit log) ================= -->
+        <div class="screen" id="screen-runs">
+          <div class="crumb">Platform</div>
+          <div class="page-head">
+            <div>
+              <h2>Runs</h2>
+              <div class="desc">Every Shepherd-generated PR, audited end to end (FR-07).</div>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="dt">
+              <tr><th>Service</th><th>Team</th><th>Action</th><th>Source</th><th>Status</th><th>Reviewer</th><th>When</th></tr>
+              <tr class="clickable">
+                <td><label for="nav-review" class="row-link">checkout-api <span class="arrow-hint">&rarr;</span></label></td>
+                <td class="muted">payments-core</td>
+                <td class="muted">Provision</td>
+                <td class="muted">Blurb</td>
+                <td><span class="pill pill-amber">Pending review</span></td>
+                <td class="muted">n/a</td>
+                <td class="muted">2 hours ago</td>
+              </tr>
+              <tr><td class="svc-name">notifications-svc</td><td class="muted">growth</td><td class="muted">Provision</td><td class="muted">Blurb</td><td><span class="pill pill-green">Merged</span></td><td class="muted">priya@</td><td class="muted">5 hours ago</td></tr>
+              <tr><td class="svc-name">fraud-scoring</td><td class="muted">payments-core</td><td class="muted">Modernize</td><td class="muted">Legacy repo</td><td><span class="pill pill-green">Merged</span></td><td class="muted">dev@</td><td class="muted">3 days ago</td></tr>
+              <tr><td class="svc-name">webhook-relay</td><td class="muted">payments-core</td><td class="muted">Provision</td><td class="muted">POC repo</td><td><span class="pill pill-red">Denied &middot; non-routable region</span></td><td class="muted">sam@</td><td class="muted">1 week ago</td></tr>
+              <tr><td class="svc-name">ledger-writer</td><td class="muted">payments-core</td><td class="muted">Provision</td><td class="muted">Blurb</td><td><span class="pill pill-green">Merged</span></td><td class="muted">dev@</td><td class="muted">1 month ago</td></tr>
+            </table>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
-  <p class="footnote">Low-fidelity wireframe, not a visual design. Grayscale intentional: this is a mechanism sketch, not a brand exercise. Two panels are deliberately separate in all three tabs: the fixed constraints panel is never editable, it's read from business metadata, while the "here's what I understood" panel is what Shepherd inferred (from text or from a repo) and is exactly what she can correct. The confirm step is the safety checkpoint, not the input format: the same two-panel pattern appears whether the source was a blurb, a POC repo, or a legacy repo.</p>
+  <p class="footnote">Higher-fidelity than a mechanism sketch, still a click-through wireframe, not a finished visual system. All navigation is CSS-only (radio buttons), no JavaScript, matching the rest of this repo's mocks. Shepherd is shown living inside a broader platform catalog rather than as a standalone tool, deliberately: the safety story (read-only business metadata, confirm-then-compose, human-only merge) holds together better when it's one governed action among several, not a special case. The fixed-constraints panel is never editable anywhere it appears, catalog entity page included, it's read from business metadata, while "here's what I understood" is what Shepherd inferred and exactly what a developer can correct.</p>
 </body>
 </html>
