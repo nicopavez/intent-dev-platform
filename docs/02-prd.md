@@ -197,15 +197,22 @@ Speed and stability aren't in tension if the agent only recombines pre-vetted mo
 
 ## Success metrics
 
-If this works, the Platforms team's role changes: it stops being a routing layer for tickets and becomes a policy and composition layer, engineers self-serve the common path, and the team's time shifts to the judgment calls that actually need a human, new service tiers, exceptions, the automation itself. These are the metrics that would show it:
+If this works, the Platforms team's role changes: it stops being a routing layer for tickets and becomes a policy and composition layer, engineers self-serve the common path, and the team's time shifts to the judgment calls that actually need a human, new service tiers, exceptions, the automation itself.
+
+**North Star, the positive impact this plan is chasing:**
 
 | Metric | Target | By when |
 |---|---|---|
-| Self-serve completion rate | 40% of targeted friction-point requests complete with no Platforms ticket | 90 days post-MVP |
-| Self-serve completion rate | 70% | 12 months post-MVP |
-| Time-to-first-deploy | Under 1 day, down from an illustrative ~4.5-day baseline | 12 months post-MVP |
-| Change-failure rate (generated config) | At or below the manual-path baseline, every checkpoint | Ongoing from P2 |
-| Agent proposal acceptance rate | Rising trend, starting below the ~30-40% Copilot benchmark | Tracked from P2 (first real PRs) |
+| Self-serve completion rate (higher is better) | 40% of targeted friction-point requests complete with no Platforms ticket, rising to 70% | 90 days, then 12 months post-MVP |
+| Time-to-first-deploy (lower is better) | Under 1 day, down from an illustrative ~4.5-day baseline | 12 months post-MVP |
+| Freeform-config incidents (lower is better, target zero) | Zero merged PRs containing infrastructure configuration that didn't come from a pre-approved module, the plan's central safety claim (FR-04, FR-06), audited via each PR's FR-07 traceability record | Ongoing from P1, first composed PR |
+
+**Guardrails, what has to hold steady or improve while those three climb:**
+
+| Metric | Target | Tracked from |
+|---|---|---|
+| Change-failure rate (generated config) | At or below the manual-path baseline, every checkpoint | P2 |
+| Agent proposal acceptance rate | Rising trend, starting below the ~30-40% Copilot benchmark | P2, first real PRs |
 
 <img src="../diagrams/success-metrics-chart.svg" alt="Self-serve completion rate and time-to-first-deploy projected over 12 months after MVP launch. Placeholder numbers, not a forecast." width="70%">
 
